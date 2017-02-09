@@ -29,21 +29,39 @@ import matplotlib.image as mpimg
 
 ########################################################################
 # Construct the argument parser and parse the arguments.
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", required=True, help="Path to the image")
-args = vars(ap.parse_args())
+#ap = argparse.ArgumentParser()
+#ap.add_argument("-i", "--image", required=True, help="Path to the image")
+#args = vars(ap.parse_args())
 
 # Create the Matplotlib window.
 fig = plt.figure()
 
 # Get the input filename
-filename = args["image"]
+#filename = args["image"]
+filename = "Assets/lena.jpg"
 
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
+image_bgr = cv2.imread(filename)
+image_rgb  = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
+image_hsv = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2HSV)
 
+#channel_r, channel_g, channel_b = cv2.split(image_rgb)
+channel_h, channel_s, channel_v = cv2.split(image_hsv)
+#cv2.imshow("name", channel_v)
+#cv2.waitKey()
+#cv2.destroyAllWindows()
+# orig + gray
+sub = fig.add_subplot(1,2,1)
+sub.set_title("Original image")
+plt.axis("off")
+plt.imshow(image_rgb)
 
+sub = fig.add_subplot(1,2,2)
+sub.set_title("Grayscale image")
+plt.axis("off")
+plt.imshow(cv2.cvtColor(image_rgb, cv2.COLOR_RGB2GRAY), cmap='Greys_r')
 
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->

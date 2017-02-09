@@ -5,13 +5,17 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5378540e-cfb8-436b-a992-93dc01d05f48</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Week1.py</StartupFile>
+    <StartupFile>Ex02_color_spaces.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Week1</Name>
     <RootNamespace>Week1</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +26,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Week1.py" />
+    <Compile Include="Ex01_images.py" />
+    <Compile Include="Ex02_color_spaces.py" />
+    <Compile Include="Ex03_video.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Output\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

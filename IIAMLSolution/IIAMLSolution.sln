@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "IIAMLSolution", "IIAMLSolution\IIAMLSolution.pyproj", "{9475A9E0-5EEC-4335-BA68-D33CA2E7E876}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Week1", "Week1\Week1.pyproj", "{5378540E-CFB8-436B-A992-93DC01D05F48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,8 +11,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9475A9E0-5EEC-4335-BA68-D33CA2E7E876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9475A9E0-5EEC-4335-BA68-D33CA2E7E876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5378540E-CFB8-436B-A992-93DC01D05F48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5378540E-CFB8-436B-A992-93DC01D05F48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -27,18 +27,35 @@ import numpy as np
 
 ########################################################################
 # Construct the argument parser and parse the arguments.
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--input",  required=True,  help="Path to the input image")
-ap.add_argument("-o", "--output", required=False, help="Path to the output image")
-args = vars(ap.parse_args())
+#ap = argparse.ArgumentParser()
+#ap.add_argument("-i", "--input",  required=True,  help="Path to the input image", default=1)
+#ap.add_argument("-o", "--output", required=False, help="Path to the output image", default=1)
+#args = vars(ap.parse_args())
 
 # Get the input filename
-filename = args["input"]
+# filename = args["input"]
+filename = "Assets/lena.jpg"
 
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
 
+#1
+#image = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
+#cv2.imshow("lena", image)
+#cv2.waitKey()
+#cv2.destroyAllWindows()
+
+#image = cv2.imread(filename)
+image = cv2.imread(filename)
+gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+bgrgray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+plt.figure(1)
+plt.imshow(bgrgray)
+plt.imshow(bgrgray)
+plt.show()
+
+#cv2.imwrite("Output/gray.png", bgrgray)
 
 
 #<!--------------------------------------------------------------------------->
