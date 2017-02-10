@@ -43,6 +43,7 @@ filename = "Assets/lena.jpg"
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
+'''
 image_bgr = cv2.imread(filename)
 image_rgb  = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
 image_hsv = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2HSV)
@@ -52,7 +53,10 @@ channel_h, channel_s, channel_v = cv2.split(image_hsv)
 #cv2.imshow("name", channel_v)
 #cv2.waitKey()
 #cv2.destroyAllWindows()
+'''
+
 # orig + gray
+'''
 sub = fig.add_subplot(1,2,1)
 sub.set_title("Original image")
 plt.axis("off")
@@ -62,6 +66,27 @@ sub = fig.add_subplot(1,2,2)
 sub.set_title("Grayscale image")
 plt.axis("off")
 plt.imshow(cv2.cvtColor(image_rgb, cv2.COLOR_RGB2GRAY), cmap='Greys_r')
+'''
+
+# f
+image = mpimg.imread(filename)
+channel_r, channel_g, channel_b = cv2.split(image)
+single = np.zeros([image.shape[0], image.shape[1]], dtype=np.uint8)
+
+image_r = cv2.merge([channel_r, single, single])
+image_g = cv2.merge([single, channel_g, single])
+image_b = cv2.merge([single, single, channel_b])
+
+# Printout
+def show(title, im, loc):
+    sub = fig.add_subplot(1,3,loc)
+    sub.set_title(title)
+    plt.axis("off")
+    plt.imshow(im)
+
+show("Channel R", image_r, 1)
+show("Channel G", image_g, 2)
+show("Channel B", image_b, 3)
 
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->

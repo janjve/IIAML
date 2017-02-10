@@ -1,4 +1,5 @@
 # Media files
+*.avi
 *.mp4
 
 # Byte-compiled / optimized / DLL files

@@ -47,12 +47,15 @@ filename = "Assets/lena.jpg"
 #cv2.destroyAllWindows()
 
 #image = cv2.imread(filename)
-image = cv2.imread(filename)
-gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-bgrgray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+image = mpimg.imread(filename)
+#gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+#bgrgray = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
 plt.figure(1)
-plt.imshow(bgrgray)
-plt.imshow(bgrgray)
+#plt.imshow(bgrgray)
+#plt.imshow(bgrgray)
+
+plt.imshow(image)
+
 plt.show()
 
 #cv2.imwrite("Output/gray.png", bgrgray)

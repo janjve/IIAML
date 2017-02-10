@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>5378540e-cfb8-436b-a992-93dc01d05f48</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Ex02_color_spaces.py</StartupFile>
+    <StartupFile>Ex03_video.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
