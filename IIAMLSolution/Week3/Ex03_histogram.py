@@ -1,4 +1,5 @@
 #<!--------------------------------------------------------------------------->
+from copy import copy
 #<!--                   ITU - IT University of Copenhagen                   -->
 #<!--                   SSS - Software and Systems Section                  -->
 #<!--       Introduction to Image Analysis and Machine Learning Course      -->
@@ -29,7 +30,7 @@ import numpy as np
 # Construct the argument parser and parse the arguments.
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
-args = vars(ap.parse_args())
+#args = vars(ap.parse_args())
 
 # Create the Matplotlib figures.
 fig_imgs = plt.figure("Images")
@@ -55,13 +56,55 @@ def showHistogram(histogram, pos, title="Histogram"):
     plt.plot(histogram)
 
 # Loads an image from a file passed as argument.
-image = cv2.imread(args["image"], cv2.IMREAD_COLOR)
+#image = cv2.imread(args["image"], cv2.IMREAD_COLOR)
+image = cv2.imread("lena.jpg", cv2.IMREAD_COLOR)
 
-#<!--------------------------------------------------------------------------->
-#<!--                            YOUR CODE HERE                             -->
-#<!--------------------------------------------------------------------------->
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+image_gray = cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2RGB)
+showImage(image_rgb, 3)
+showImage(image_gray, 1)
 
+hist_image_gray = cv2.calcHist([image_gray], [0],None, [256], [0, 255])
+showHistogram(hist_image_gray, 1)
 
+shuffled = copy(image_gray)
+np.random.shuffle(shuffled)
+shuffled = cv2.transpose(shuffled)
+np.random.shuffle(shuffled)
+showImage(shuffled, 2)
+
+hist_image_shuffled = cv2.calcHist([shuffled], [0],None, [256], [0, 255])
+showHistogram(hist_image_shuffled,2)
+
+##
+
+channel_r, channel_g, channel_b = cv2.split(image_rgb)
+hist_channel_r = cv2.calcHist([channel_r], [0],None, [256], [0, 255])
+hist_channel_g = cv2.calcHist([channel_g], [0],None, [256], [0, 255])
+hist_channel_b = cv2.calcHist([channel_b], [0],None, [256], [0, 255])
+
+hist_channel_all = np.zeros([256, 3])
+hist_channel_all[:,0] = hist_channel_r.T
+hist_channel_all[:,1] = hist_channel_g.T
+hist_channel_all[:,2] = hist_channel_b.T
+
+showHistogram(hist_channel_all, 3)
+
+##
+image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+showImage(image_hsv, 4)
+
+channel_h, channel_s, channel_v = cv2.split(image_hsv)
+hist_channel_h = cv2.calcHist([channel_h], [0],None, [256], [0, 255])
+hist_channel_s = cv2.calcHist([channel_s], [0],None, [256], [0, 255])
+hist_channel_v = cv2.calcHist([channel_v], [0],None, [256], [0, 255])
+
+hist_channel_all2 = np.zeros([256, 3])
+hist_channel_all2[:,0] = hist_channel_h.T
+hist_channel_all2[:,1] = hist_channel_s.T
+hist_channel_all2[:,2] = hist_channel_v.T
+
+showHistogram(hist_channel_all2, 4)
 
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->

@@ -29,7 +29,9 @@ import numpy as np
 # Construct the argument parse and parse the arguments.
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
-args = vars(ap.parse_args())
+#args = vars(ap.parse_args())
+
+
 
 # Create the Matplotlib figure.
 fig = plt.figure("Images")
@@ -48,8 +50,18 @@ def showImage(image, pos, title="Image", isGray=False):
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
+image = cv2.imread("zico.jpg", cv2.IMREAD_COLOR)
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
+mask_img = np.zeros(image.shape[:2], dtype="uint8")
+cv2.rectangle(mask_img, (647, 40), (776, 195), (255,255,255), -1)
+cv2.rectangle(mask_img, (128, 19), (305, 182), (255,255,255), -1)
+cv2.circle(mask_img, (543, 620), 60, (255,255,255), -1)
+result = cv2.bitwise_and(image, image, mask=mask_img)
 
+showImage(image_rgb, 1)
+showImage(mask_img, 2, isGray=True)
+showImage(cv2.cvtColor(result, cv2.COLOR_BGR2RGB), 3)
 
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->

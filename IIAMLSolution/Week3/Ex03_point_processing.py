@@ -29,7 +29,7 @@ import numpy as np
 # Construct the argument parser and parse the arguments.
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
-args = vars(ap.parse_args())
+#args = vars(ap.parse_args())
 
 # Variables used for point processing.
 # a: parameter used for changing contrast.
@@ -46,7 +46,7 @@ def changeA(value):
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
 
-    
+    a = value / 10.0
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -60,7 +60,7 @@ def changeB(value):
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
 
-    
+    b = value - 128
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -74,7 +74,7 @@ def changeC(value):
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
 
-    
+    c = value * 255
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -82,55 +82,47 @@ def changeC(value):
     print "Contrast: ", a, "\t\tBrightness: ", b, "\tNegative: ", c
 
 def contrast(vector, x):
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
-
-    # Remove this command.
-    return vector
-
+    result = x * vector
+    result[result > 255] = 255
+    result = result.astype("uint8")
+    return result
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
 
 def brightness(vector, x):
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
-
-    # Remove this command.
-    return vector
+    result = vector + x
+    result[result > 255] = 255
+    result[result < 0] = 0
+    result = result.astype("uint8")
+    return result
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
 
 def negative(vector, x):
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
-
-    # Remove this command.
-    return vector
-
+    result = abs(vector - x)
+    result = result.astype("uint8")
+    return result 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
 
 def pointProcessing(image, a, b, c):
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
-
-    
-
+    result = abs((a * image + b) - c)
+    result[result > 255] = 255
+    result[result < 0] = 0
+    result = result.astype("uint8")
+    return result
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
-    return image
+    
 
 # Loads a grayscale image from a file passed as argument.
-image = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
+# image = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
+image = cv2.imread("lena.jpg", cv2.IMREAD_GRAYSCALE)
 
 # Create a Matplotlib window.
 fig = plt.figure()
@@ -163,7 +155,7 @@ plt.grid(None, 'major', 'both')
 # Creates an OpenCV window with three trackbars.
 cv2.namedWindow("Point Processing")
 cv2.createTrackbar("Contrast",   "Point Processing",  10,  20, changeA)
-cv2.createTrackbar("Brightness", "Point Processing", 128, 256, changeB)
+cv2.createTrackbar("Brightness", "Point Processing", 0, 256, changeB)
 cv2.createTrackbar("Negative",   "Point Processing",   0,   1, changeC)
 
 # This vector contains a list of all valid grayscale level.
