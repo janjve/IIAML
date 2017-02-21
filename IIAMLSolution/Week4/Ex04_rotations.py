@@ -44,8 +44,8 @@ def rotate2D(theta):
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
 
-    # Remove this command.
-    return np.array((2, 2), dtype=np.float64)
+    return np.matrix([[math.cos(theta), -math.sin(theta)],
+                     [math.sin(theta), math.cos(theta)]], dtype=np.float64)
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -78,9 +78,39 @@ def toEuclidean(points):
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
+# Exercise 4.02.b, c
 
+angle = math.pi * 2.1
+R = rotate2D(angle)
+point = np.array([[0], 
+                  [1]], dtype = np.float64)
+p = R * point
+"""
+print p
+"""
 
+# Exercise 4.02.d
+P1 = np.array([[0,  1, -1, -1], 
+               [1, -1, -1,  1]], dtype = np.float64)
+P1_ = R * P1
 
+#"""
+showPoints(P1, color = '0.75')
+showPoints(P1_)
+#"""
+
+# Exercise 4.02.e
+P2 = np.array([[3,  3, 2, 2], 
+               [3, -2, 2, 3]], dtype = np.float64)
+P2_ = R * P2
+
+#"""
+showPoints(P2, color = 'red')
+showPoints(P2_, color = 'magenta')
+#"""
+plt.show()
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->
 #<!--------------------------------------------------------------------------->
+print ""
+raw_input("Done. Press enter to terminate..")

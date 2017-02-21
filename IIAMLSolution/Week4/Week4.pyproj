@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>e423b501-4b30-4e73-871b-2b59f6b25c7f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Ex04_warmup.py</StartupFile>
+    <StartupFile>Ex04_rotations.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
