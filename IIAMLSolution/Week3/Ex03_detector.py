@@ -51,16 +51,19 @@ while True:
     if not retval:
         break
     
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
+    # Preprocessing
+    result = cv2.resize(frame, (320, 240))
+    result_hsv = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
 
-    # Remove the line after you finish the exercise.
-    result = np.uint8([[[0, 0, 0]]])
+    #blue
+    mask = cv2.inRange(result_hsv, (0,223,127),(120,255,255))
 
-    #<!--------------------------------------------------------------------------->
-    #<!--                                                                       -->
-    #<!--------------------------------------------------------------------------->
+    result_masked = cv2.bitwise_and(result, result, mask=mask)
+    mask_bgr = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+    row1 = np.hstack((result, result_hsv))
+    row2 = np.hstack((mask_bgr, result_masked))
+    result = np.vstack((row1,row2))
 
     # Show the processed images.
     cv2.imshow("Result", result)
