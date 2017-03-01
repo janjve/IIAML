@@ -30,7 +30,7 @@ import numpy as np
 # Construct the argument parser and parse the arguments.
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, help="Path to the image")
-#args = vars(ap.parse_args())
+args = vars(ap.parse_args())
 
 # Create the Matplotlib figures.
 fig_imgs = plt.figure("Images")
@@ -56,8 +56,8 @@ def showHistogram(histogram, pos, title="Histogram"):
     plt.plot(histogram)
 
 # Loads an image from a file passed as argument.
-#image = cv2.imread(args["image"], cv2.IMREAD_COLOR)
-image = cv2.imread("lena.jpg", cv2.IMREAD_COLOR)
+image = cv2.imread(args["image"], cv2.IMREAD_COLOR)
+#image = cv2.imread("lena.jpg", cv2.IMREAD_COLOR)
 
 image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 image_gray = cv2.cvtColor(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), cv2.COLOR_GRAY2RGB)

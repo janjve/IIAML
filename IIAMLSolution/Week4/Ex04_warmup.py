@@ -52,10 +52,10 @@ print B
 print C
 """
 # Exercise 4.01.b
-"""
+
 print np.array(A - B, dtype = np.float64)
 print np.array(A - B, dtype = np.float16)
-"""
+
 # Exercise 4.01.c
 # This does not show anything.
 """

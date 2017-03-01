@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>091cc544-c3c4-47fd-bcf0-d72c13ff4872</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Ex03_detector.py</StartupFile>
+    <StartupFile>Ex03_histogram.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

@@ -3,15 +3,23 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>e423b501-4b30-4e73-871b-2b59f6b25c7f</ProjectGuid>
+    <ProjectGuid>4b81c812-dce8-4acf-8f0a-5cefd45889fc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Ex04_warmup.py</StartupFile>
+    <StartupFile>Ex05_filter1D.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>Week4</Name>
-    <RootNamespace>Week4</RootNamespace>
+    <Name>Week5</Name>
+    <RootNamespace>Week5</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>
+    </CommandLineArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <InterpreterArguments>
+    </InterpreterArguments>
+    <Environment>
+    </Environment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,12 +34,15 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="data.txt" />
+    <Compile Include="Ex05_filter1D.py" />
+    <Compile Include="Ex05_filter2D.py" />
+    <Compile Include="Ex05_filtering.py" />
+    <Compile Include="Ex05_filters.py" />
+    <Compile Include="Ex05_template.py" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ex04_linear.py" />
-    <Compile Include="Ex04_rotations.py" />
-    <Compile Include="Ex04_warmup.py" />
+    <Content Include="lena.jpg" />
+    <Content Include="pattern.jpg" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

@@ -54,7 +54,8 @@ def rotate2D(theta):
 def transformation(theta=0, t=(0, 0)):
     """
     This function return a 3x3 homogeneous transformation matrix that
-    represents a rotation followed by a translation transformation.    """
+    represents a rotation followed by a translation transformation.
+    """
     return np.array([[ math.cos(theta), -math.sin(theta), t[0] ],
                      [ math.sin(theta),  math.cos(theta), t[1] ],
                      [               0,                0,   1  ]],
@@ -63,13 +64,15 @@ def transformation(theta=0, t=(0, 0)):
 def toHomogeneous(points):
     """
     This function convert Euclidean coordinates points in homogeneous
-    coordinates points.    """
+    coordinates points.
+    """
     return np.vstack((points, np.ones((1, points.shape[1]))))
 
 def toEuclidean(points):
     """
     This function convert homogeneous coordinates points in Euclidean
-    coordinates points.    """
+    coordinates points.
+    """
     for point in points:
         point /= point[2]
 
@@ -94,20 +97,98 @@ P1 = np.array([[0,  1, -1, -1],
                [1, -1, -1,  1]], dtype = np.float64)
 P1_ = R * P1
 
-#"""
+"""
 showPoints(P1, color = '0.75')
 showPoints(P1_)
-#"""
+"""
 
 # Exercise 4.02.e
 P2 = np.array([[3,  3, 2, 2], 
                [3, -2, 2, 3]], dtype = np.float64)
 P2_ = R * P2
 
-#"""
+"""
 showPoints(P2, color = 'red')
 showPoints(P2_, color = 'magenta')
-#"""
+"""
+
+# Exercise 4.02.f
+p4 = np.array([[0],
+               [0]], dtype=np.float64)
+t1 = np.array([[0],
+               [1]], dtype=np.float64)
+t2 = np.array([[1],
+               [0]], dtype=np.float64)
+t3 = np.array([[-3],
+               [ 4]], dtype=np.float64)
+t4 = np.array([[-2],
+               [-1]], dtype=np.float64)
+
+p4_t1 = p4 + t1
+p4_t2 = p4 + t2
+p4_t3 = p4 + t3
+p4_t4 = p4 + t4
+"""
+showPoints(p4)
+showPoints(p4_t1, color="red")
+showPoints(p4_t2, color="green")
+showPoints(p4_t3, color="blue")
+showPoints(p4_t4, color="yellow")
+"""
+
+# Exercise 4.02.g
+P3 = np.matrix([[0, -1, 2, -2], 
+                [0, -1, 2, -1]], dtype=np.float64)
+
+P3_prime1 = P3 + t1
+P3_prime2 = P3 + t2
+P3_prime3 = P3 + t3
+P3_prime4 = P3 + t4
+
+showPoints(P3_prime1, color="red")
+#showPoints(P3_prime2, color="green")
+#showPoints(P3_prime3, color="blue")
+#showPoints(P3_prime4, color="yellow")
+
+
+# Exercise 4.02.i
+T_AB = transformation(50*math.pi/180, (7,5))
+
+# Exercise 4.02.j
+O_A = toHomogeneous(np.matrix([[0],[0]], dtype=np.float64))
+#O_A = np.matrix([[0],[0], [1]], dtype=np.float64)
+O_B = T_AB * O_A
+
+"""
+showPoints(O_B)
+"""
+# Exercise 4.02.k
+# ???
+
+# Exercise 4.02.l
+P_A1 = toHomogeneous(np.matrix([[1],[0]], dtype=np.float64))
+P_A2 = toHomogeneous(np.matrix([[0],[1]], dtype=np.float64))
+
+P_B1 = T_AB * P_A1
+P_B2 = T_AB * P_A2
+"""
+showPoints(P_B1, color='red')
+showPoints(P_B2, color='red')
+"""
+# Exercise 4.02.m
+T_BA = np.linalg.inv(T_AB)
+
+# Exercise 4.02.n
+P_A1 = T_BA * P_B1
+P_A2 = T_BA * P_B2
+"""
+showPoints(P_A1, color='green')
+showPoints(P_A2, color='green')
+"""
+# Exercise 4.02.n
+
+# A transformation from A to B and from B to A, which means we get back to the original coordinate-system.
+
 plt.show()
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->
