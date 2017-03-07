@@ -89,13 +89,14 @@ def to_uint8(data):
 def saltAndPepperNoise(image, density):
     noised = image.copy()
     h, w = noised.shape
-
+    
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
 
     # ============================== 5.01 (a) [i] =============================== #
-    
+    noised[(np.random.rand(h, w) < density)] = [0]
+    noised[(np.random.rand(h, w) < density)] = [255]
     # ============================== 5.01 (a) [i] =============================== #
 
     return noised
@@ -109,7 +110,8 @@ def gaussianNoise(image, mu, sigma):
     #<!--------------------------------------------------------------------------->
 
     # ============================== 5.01 (a) [ii] ============================== #
-    
+    norm = to_uint8(np.random.normal(mu, sigma, (h,w)))
+    noised = cv2.add(noised, norm)
     # ============================== 5.01 (a) [ii] ============================== #
 
     return noised
@@ -123,7 +125,8 @@ def uniformNoise(image, low, high):
     #<!--------------------------------------------------------------------------->
 
     # ============================= 5.01 (a) [iii] ============================== #
-    
+    norm = to_uint8(np.random.uniform(low, high, (h,w)))
+    noised = cv2.add(noised, norm)
     # ============================= 5.01 (a) [iii] ============================== #
 
     return noised
@@ -143,7 +146,11 @@ def saltAndPepperFilter(image, n=3):
     #<!--------------------------------------------------------------------------->
 
     # ============================= 5.01 (c)(e)(f) ============================== #
-    
+    kernel = np.ones((n,n))*(1.0/n**2)
+    filtered = cv2.filter2D(filtered, -1, kernel)
+
+    #filtered = cv2.GaussianBlur(filtered, (n,n), 3)
+
     # ============================= 5.01 (c)(e)(f) ============================== #
 
     return filtered
@@ -157,7 +164,10 @@ def gaussianFilter(image, n=5):
     #<!--------------------------------------------------------------------------->
     
     # =============================== 5.01 (c)(e) =============================== #
-    
+    #kernel = np.ones((n,n))*(1.0/n**2)
+    #filtered = cv2.filter2D(filtered, -1, kernel)
+
+    filtered = cv2.GaussianBlur(filtered, (n,n), 3)
     # =============================== 5.01 (c)(e) =============================== #
 
     return filtered
@@ -171,7 +181,10 @@ def uniformFilter(image, n=5):
     #<!--------------------------------------------------------------------------->
     
     # =============================== 5.01 (c)(e) =============================== #
-    
+    #kernel = np.ones((n,n))*(1.0/n**2)
+    #filtered = cv2.filter2D(filtered, -1, kernel)
+
+    filtered = cv2.GaussianBlur(filtered, (n,n), 3)
     # =============================== 5.01 (c)(e) =============================== #
 
     return filtered
@@ -197,17 +210,16 @@ image = cv2.imread(args["image"], cv2.IMREAD_GRAYSCALE)
 
 # ================================ 5.01 (b) ================================= #
 # Create an image with salt and pepper noise.
-saltAndPepper = saltAndPepperNoise(image, 0)
+saltAndPepper = saltAndPepperNoise(image, 0.01)
 
 # Create an image with Gaussian noise.
-gaussian = gaussianNoise(image, 0, 0)
+gaussian = gaussianNoise(image, 0.5, 20)
 
 # Create an image with uniform noise.
-uniform = uniformNoise(image, 0, 0)
+uniform = uniformNoise(image, 0, 70)
 
 # Show the original image and the noised images.
-showImages(Uniform=uniform, Gaussian=gaussian, Salt_and_Pepper=saltAndPepper,
-           Original=image)
+#showImages(Uniform=uniform, Gaussian=gaussian, Salt_and_Pepper=saltAndPepper, Original=image)
 # ================================ 5.01 (b) ================================= #
 
 #<!--------------------------------------------------------------------------->

@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>4b81c812-dce8-4acf-8f0a-5cefd45889fc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Ex05_filter1D.py</StartupFile>
+    <StartupFile>Ex05_filters.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

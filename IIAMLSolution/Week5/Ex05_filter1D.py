@@ -120,8 +120,22 @@ while plt.fignum_exists(fig.number):
     #<!--------------------------------------------------------------------------->
     
     # ================================ 5.01 (c) ================================= #
-    lines = smoothed_ax.vlines(x=interval, ymin=[0], ymax=pulse[:current])
+    nextPulse = []
+    # Mean
+    """
+    for i in range(current):
+        sum = 0
+        for j in range(i-kernel/2, i+kernel/2+1):
+            if j < 0:
+                j = -j
+            elif j >= n:
+                j = n - (j - n) - 1
+            sum += pulse[j]
+        nextPulse.append(sum/kernel)
+    """
 
+    lines = smoothed_ax.vlines(interval[:current], [0], nextPulse)
+    smoothed_ax.plot(interval[:current], nextPulse, "ko")
     # ================================ 5.05 (c) ================================= #
     
     #<!--------------------------------------------------------------------------->
