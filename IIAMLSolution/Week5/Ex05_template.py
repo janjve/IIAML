@@ -149,7 +149,21 @@ def matchAll(image, template, threshold, numOfScales=0):
     #<!--------------------------------------------------------------------------->
 
     # ================================ 5.05 (e) ================================= #
-    
+    image_rect = image.copy()
+    for _ in xrange(numOfScales):
+        image_rect = cv2.pyrDown(image_rect, tuple(np.multiply(image_rect.shape[:2], 0.5)))
+    matched = cv2.matchTemplate(image_rect, template, cv2.TM_CCORR_NORMED)
+
+    area = template.shape[:2]
+    rows, cols = matched.shape[:2]
+    for x in xrange(rows):
+        for y in xrange(cols):
+            if matched[x,y] >= threshold:
+                p1 = (y*(numOfScales+1), x*(numOfScales+1))
+                p2 = tuple(np.add(p1, area))
+                cv2.rectangle(image, p1, p2, (0,0,255), 2) # Could scale threshold with value
+
+    showImages(CrossCorrelation = matched, Original_image_and_possible_matches = image,Template = template)
     # ================================ 5.05 (e) ================================= #
 
     #<!--------------------------------------------------------------------------->
@@ -169,34 +183,79 @@ pattern  = args["pattern"]
 #<!--------------------------------------------------------------------------->
 #<!--                            YOUR CODE HERE                             -->
 #<!--------------------------------------------------------------------------->
-
+"""
 # ================================ 5.05 (a) ================================= #
+image = cv2.imread(filename, cv2.IMREAD_ANYCOLOR)
+area = selectArea(image)
 
+template = image[area[0][1]:area[1][1], area[0][0]:area[1][0]]
+template = cv2.cvtColor(template, cv2.COLOR_RGB2BGR)
+image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
+#showImages(Lena = image, Eye = template)
 # ================================ 5.05 (a) ================================= #
 
 
 
 # ================================ 5.05 (b) ================================= #
+matched1 = cv2.matchTemplate(image, template, cv2.TM_CCORR_NORMED)
+matched2 = cv2.matchTemplate(image, template, cv2.TM_SQDIFF_NORMED)
+matched3 = cv2.matchTemplate(image, template, cv2.TM_CCOEFF_NORMED)
 
+#showImages(Lena = image, Matched1 = matched1, Matched2 = matched2, Matched3 = matched3)
 # ================================ 5.05 (b) ================================= #
 
 
 
 # ================================ 5.05 (c) ================================= #
+min, max, min_p, max_p = cv2.minMaxLoc(matched3)
+max_p2 = tuple(max_p + np.subtract(area[1], area[0]))
 
+image_with_match = image.copy()
+cv2.rectangle(image_with_match, max_p, max_p2, (0,0,255), 2)
+#showImages(Lena = image, Match = image_with_match)
 # ================================ 5.05 (c) ================================= #
-
+"""
 
 
 # ================================ 5.05 (d) ================================= #
+p_image = cv2.imread(pattern, cv2.IMREAD_ANYCOLOR)
+p_area = selectArea(p_image)
+
+p_template = p_image[p_area[0][1]:p_area[1][1], p_area[0][0]:p_area[1][0]]
+p_template = cv2.cvtColor(p_template, cv2.COLOR_RGB2BGR)
+p_image = cv2.cvtColor(p_image, cv2.COLOR_RGB2BGR)
+
+# Match
+p_matched1 = cv2.matchTemplate(p_image, p_template, cv2.TM_CCORR_NORMED)
+p_matched2 = cv2.matchTemplate(p_image, p_template, cv2.TM_SQDIFF_NORMED)
+p_matched3 = cv2.matchTemplate(p_image, p_template, cv2.TM_CCOEFF_NORMED)
+
+#showImages(Pattern = p_image, Matched1 = p_matched1, Matched2 = p_matched2, Matched3 = p_matched3)
+
+# Match pyramide
+def matchAndPrint(im, template):
+    p_matched1 = cv2.matchTemplate(im, template, cv2.TM_CCORR_NORMED)
+    p_matched2 = cv2.matchTemplate(im, template, cv2.TM_SQDIFF_NORMED)
+    p_matched3 = cv2.matchTemplate(im, template, cv2.TM_CCOEFF_NORMED)
+    showImages(Pattern = p_image, Matched1 = p_matched1, Matched2 = p_matched2, Matched3 = p_matched3)
+
+p_image_down2 = cv2.pyrDown(p_image, tuple(np.multiply(p_image.shape[:2], 0.5)))
+p_image_down4 = cv2.pyrDown(p_image_down2, tuple(np.multiply(p_image_down2.shape[:2], 0.5)))
+p_image_down8 = cv2.pyrDown(p_image_down4, tuple(np.multiply(p_image_down4.shape[:2], 0.5)))
+
+
+#matchAndPrint(p_image_down2, p_template)
+#matchAndPrint(p_image_down4, p_template)
+#matchAndPrint(p_image_down8, p_template)
 
 # ================================ 5.05 (d) ================================= #
 
 
 
-# ================================ 5.05 (e) ================================= #
-
-# ================================ 5.05 (e) ================================= #
+# ================================ 5.05 (f) ================================= #
+matchAll(p_image, p_template, 0.95)
+# ================================ 5.05 (f) ================================= #
 
 #<!--------------------------------------------------------------------------->
 #<!--                                                                       -->
