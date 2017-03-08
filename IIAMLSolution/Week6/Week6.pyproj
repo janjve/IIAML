@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>950a5d2a-87c3-4203-83d9-7a3906679aaf</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>ex1.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>Week6</Name>
+    <RootNamespace>Week6</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="CaptureVideo\" />
+    <Folder Include="Inputs\" />
+    <Folder Include="Inputs\xml\" />
+    <Folder Include="Outputs\" />
+    <Folder Include="RecordVideo\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assignment #01.wpr" />
+    <Content Include="Assignment #01.wpu" />
+    <Content Include="Inputs\eye01.m4v" />
+    <Content Include="Inputs\eye02.m4v" />
+    <Content Include="Inputs\eye03.m4v" />
+    <Content Include="Inputs\eye04.m4v" />
+    <Content Include="Inputs\eye05.m4v" />
+    <Content Include="Inputs\eye06.m4v" />
+    <Content Include="Inputs\eye07.m4v" />
+    <Content Include="Inputs\eye08.m4v" />
+    <Content Include="Inputs\eye09.m4v" />
+    <Content Include="Inputs\eye10.m4v" />
+    <Content Include="Inputs\eye11.m4v" />
+    <Content Include="Inputs\eye12.m4v" />
+    <Content Include="Inputs\eye13.m4v" />
+    <Content Include="Inputs\eye14.m4v" />
+    <Content Include="Inputs\eye15.m4v" />
+    <Content Include="Inputs\eye16.m4v" />
+    <Content Include="Inputs\eye17.m4v" />
+    <Content Include="Inputs\eye18.m4v" />
+    <Content Include="Inputs\eye19.m4v" />
+    <Content Include="Inputs\eye20.m4v" />
+    <Content Include="Inputs\jackie.jpg" />
+    <Content Include="Inputs\tais.jpg" />
+    <Content Include="Inputs\tyson.jpg" />
+    <Content Include="Inputs\xml\haarcascade_eye.xml" />
+    <Content Include="Inputs\xml\haarcascade_eye_tree_eyeglasses.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalcatface.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalcatface_extended.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalface_alt.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalface_alt2.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalface_alt_tree.xml" />
+    <Content Include="Inputs\xml\haarcascade_frontalface_default.xml" />
+    <Content Include="Inputs\xml\haarcascade_fullbody.xml" />
+    <Content Include="Inputs\xml\haarcascade_lefteye_2splits.xml" />
+    <Content Include="Inputs\xml\haarcascade_licence_plate_rus_16stages.xml" />
+    <Content Include="Inputs\xml\haarcascade_lowerbody.xml" />
+    <Content Include="Inputs\xml\haarcascade_profileface.xml" />
+    <Content Include="Inputs\xml\haarcascade_righteye_2splits.xml" />
+    <Content Include="Inputs\xml\haarcascade_russian_plate_number.xml" />
+    <Content Include="Inputs\xml\haarcascade_smile.xml" />
+    <Content Include="Inputs\xml\haarcascade_upperbody.xml" />
+    <Content Include="Inputs\zooey.jpg" />
+    <Content Include="Standard Front Page.pdf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CaptureVideo\AbstractVideo.py" />
+    <Compile Include="CaptureVideo\CaptureVideo.py" />
+    <Compile Include="CaptureVideo\FrameRate.py" />
+    <Compile Include="CaptureVideo\InputVideo.py" />
+    <Compile Include="CaptureVideo\__init__.py" />
+    <Compile Include="ex1.py" />
+    <Compile Include="ex2.py" />
+    <Compile Include="ex3.py" />
+    <Compile Include="ex4.py" />
+    <Compile Include="ex5.py" />
+    <Compile Include="ex6.py" />
+    <Compile Include="EyeFeatureDetector.py" />
+    <Compile Include="GeometricMethods.py" />
+    <Compile Include="RecordVideo\RecordVideo.py" />
+    <Compile Include="RecordVideo\__init__.py" />
+    <Compile Include="RegionProps.py" />
+    <Compile Include="SkinColorDetector.py" />
+    <Compile Include="warmUpCapture.py" />
+    <Compile Include="warmUpRecord.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
+  <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
