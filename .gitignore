@@ -1,6 +1,8 @@
 # Media files
 *.avi
 *.mp4
+Output/
+Outputs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
