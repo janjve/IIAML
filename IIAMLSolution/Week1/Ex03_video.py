@@ -31,7 +31,8 @@ import cv2
 
 # Create a video capture object to capture from video files, image sequences or cameras.
 # A
-cap = cv2.VideoCapture("Assets/Field.mp4")
+#cap = cv2.VideoCapture("Assets/Field.mp4")
+cap = cv2.VideoCapture(1)
 # B
 '''
 cap = cv2.VideoCapture(0)
@@ -52,10 +53,10 @@ while(True):
     ret, frame = cap.read()
 
     # Convert the frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Display the resulting frame
-    cv2.imshow("video", gray)
+    cv2.imshow("video", frame)
     key = cv2.waitKey(1)
 
     # Check the button pressed by the user
