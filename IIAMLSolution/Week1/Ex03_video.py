@@ -46,6 +46,13 @@ cap = cv2.VideoCapture(0)
 is_saving = False
 i = 0
 
+record = RecordVideo(True)
+record.addOutputVideo("Outputs/" + args["output"], size=(640, 480),
+                      framerate=30., isColor=True)
+
+# Start the record thread.
+record.startThread()
+
 # Grab a new frame while the user does not press the "q" button.
 while(True):
 
@@ -74,5 +81,14 @@ while(True):
     #<!--------------------------------------------------------------------------->
 
 # When everything done, release the capture
+
+record.stopThread()
+while record.IsRunning:
+    time.sleep(1)
+
+# When everything done, release the capture and record objects.
+del record
+del capture
+
 cap.release()
 cv2.destroyAllWindows()

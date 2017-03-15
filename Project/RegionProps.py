@@ -97,6 +97,8 @@ class RegionProps(object):
                 props.update({"ConvexHull" : self.__CalcConvexHull(contour)})
             elif prop == "isconvex":
                 props.update({"IsConvex" : self.__IsConvex(contour)})
+            elif prop == "circularity":
+                props.update({"Circularity" : self.__CalcCircularity(contour)})                
             elif failInInput:
                 pass
             else:
@@ -150,3 +152,11 @@ class RegionProps(object):
     def __IsConvex(self, contour):
         """Tests a contour convexity."""
         return cv2.isContourConvex(contour)
+    
+    def __CalcCircularity(self, contour):
+        perimeter = self.__CalcPerimiter(contour)
+        area = self.__CalcArea(contour)
+        if perimeter > 0:
+            return 4 * math.pi * area / perimeter ** 2
+        else:
+            return 0

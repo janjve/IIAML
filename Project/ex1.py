@@ -50,7 +50,7 @@ def onSlidersChange(self, dummy=None):
     slidersVals["pupilMaximum"]  = cv2.getTrackbarPos("pupilMaximum", "trackbars")
 
 # Define the input video source.
-uid = 0
+uid = 1
 if args["input"] != None:
     if type(args["input"]) is str and args["input"].isdigit():
         uid = int(args["input"])
@@ -59,7 +59,7 @@ if args["input"] != None:
 
 # Define the detector arguments.
 slidersVals = {}
-slidersVals["pupilThr"] = 0
+slidersVals["pupilThr"] = 80
 slidersVals["pupilMinimum"]  = 10
 slidersVals["pupilMaximum"]  = 50
 

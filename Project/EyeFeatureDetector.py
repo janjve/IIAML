@@ -64,13 +64,14 @@ class EyeFeatureDetector(object):
         """
         # Create the output variable.
         bestPupil = -1
+        bestProps = {}
         ellipses  = []
         centers   = []
 
         # Create variables to plot the regression data.
         # TIPS: You must select two blob properties and add their values in
         #       the following lists. Then, call the private method
-        #       __plotRegressionData() in the end of your implementation.
+        #       __plotData() in the end of your implementation.
         x = []
         y = []
 
@@ -94,9 +95,27 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
+        for blob in contours:
+            props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
+                
+            # Is candidate
+            if 500.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.2:
+                centers.append(props["Centroid"])
+                if len(blob) > 4:
+                    ellipses.append(cv2.fitEllipse(blob))
+                    x.append(props["Area"])
+                    y.append(props["Extend"])                    
+                else:
+                    ellipses.append(cv2.minAreaRect(blob))
+                    x.append(props["Area"])
+                    y.append(props["Extend"])
+                
+                # Update best props
+                if bestPupil == -1 or props["Circularity"] > bestProps["Circularity"]: # Append other checks.
+                    bestProps = props
+                    bestPupil = len(ellipses) - 1
         
-
+        self.__plotData(x, y, bestPupil)
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
@@ -341,9 +360,9 @@ class EyeFeatureDetector(object):
         # Merge the horizontal and vertical components.
         return cv2.addWeighted(absX, 0.5, absY, 0.5, 0)
 
-    def __plotRegressionData(self, x, y, bestPupil):
-        """Plot the regression data based on blob properties."""
-        # Check if there are valid regression data.
+    def __plotData(self, x, y, bestPupil):
+        """Plot the data based on blob properties."""
+        # Check if there are valid data.
         if bestPupil == -1:
             return
 
@@ -354,7 +373,7 @@ class EyeFeatureDetector(object):
             plt.show(block=False)
             self.__firstPlot = False
 
-        # Plot the regression data.
+        # Plot the data.
         self.__line.set_xdata(x)
         self.__line.set_ydata(y)
         self.__ax.plot(x[bestPupil], y[bestPupil], "ro")
