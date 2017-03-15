@@ -94,7 +94,7 @@ class RecordVideo(object):
         if self.IsDebugging:
             print "RecordVideo: Adding a new output video to the record process."
 
-        self.__videos[key] = cv2.VideoWriter(uid, 0, framerate, size, isColor)
+        self.__videos[key] = cv2.VideoWriter(uid, self.__fourcc, framerate, size, isColor)
 
         return True
 

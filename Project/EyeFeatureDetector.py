@@ -94,16 +94,8 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
+
         
-        for blob in contours:
-            props = self.Props.calcContourProperties(blob,["centroid","area", "extend", "perimiter", "isconvex", "boundingbox"])
-            if 500.0 < props["Area"] < 6000.0 and 0.5 < props["Extend"] < 0.75:
-                centers.append(props["Centroid"])
-                if len(blob) > 4:
-                    ellipses.append(cv2.fitEllipse(blob))
-                else:
-                    ellipses.append(cv2.minAreaRect(blob))
-            
 
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->

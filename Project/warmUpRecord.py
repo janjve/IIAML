@@ -38,7 +38,7 @@ capture.addInputVideo(0, size=(640, 480), framerate=30.)
 # Tips: You can add a new output video file with the method
 # RecordVideo.addOutputVideo().
 record = RecordVideo(True)
-record.addOutputVideo("Outputs/warmUpVideo.avi", size=(640, 480), framerate=30., isColor=False)
+record.addOutputVideo("Outputs/warmUpVideo.mp4", size=(640, 480), framerate=30., isColor=False)
 
 # Start the record thread.
 record.startThread()
