@@ -21,7 +21,7 @@ proj.directory-list = [{'dirloc': loc('.'),
                         'watch_for_changes': True}]
 proj.file-type = 'shared'
 proj.launch-config = {loc('ex1.py'): ('project',
-                                      (u'-i "eye01.m4v" -o "Ex01_A01.mp4"',
+                                      (u'-i "eye03.m4v" -o "Ex01_A01.mp4"',
                                        '')),
                       loc('ex2.py'): ('project',
                                       (u'-i "eye02.m4v" -o "Ex02_B01.mp4"',
