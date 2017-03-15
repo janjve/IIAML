@@ -51,7 +51,7 @@ def onSlidersChange(self, dummy=None):
     slidersVals["numOfGlints"]  = cv2.getTrackbarPos("numOfGlints", "trackbars")
 
 # Define the input video source.
-uid = 0
+uid = 1
 if args["input"] != None:
     if type(args["input"]) is str and args["input"].isdigit():
         uid = int(args["input"])

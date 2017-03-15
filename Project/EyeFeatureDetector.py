@@ -115,7 +115,7 @@ class EyeFeatureDetector(object):
                     bestProps = props
                     bestPupil = len(ellipses) - 1
         
-        self.__plotData(x, y, bestPupil)
+        #self.__plotData(x, y, bestPupil)
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
@@ -133,23 +133,58 @@ class EyeFeatureDetector(object):
             numOfGlints = 1
 
         # Create the output variable.
-        bestGlints= [-1] * numOfGlints
+        bestGlints = [-1] * numOfGlints
+        bestGlintsProps = [{}] * numOfGlints
         ellipses  = []
         centers   = []
-
+        
+        grayscale = image.copy()
+        if len(grayscale.shape) == 3:
+            grayscale = cv2.cvtColor(grayscale, cv2.COLOR_BGR2GRAY)        
+        
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
+        _, thres = cv2.threshold(grayscale, threshold, 255,
+                                 cv2.THRESH_BINARY_INV)
+    
+        # Find blobs in the input image.
+        _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
 
-        
-
+        for blob in contours:
+            props = self.Props.calcContourProperties(blob, ["centroid", "area", "extend", "circularity"])
+            if props["Area"] < 350.0 and props["Circularity"] > 0.2:
+                centers.append(props["Centroid"])
+                if len(blob) > 4:
+                        ellipses.append(cv2.fitEllipse(blob))
+                else:
+                        ellipses.append(cv2.minAreaRect(blob))
+                        
+            # Not found max number of glints yet.
+            glintCount = len([x for x in bestGlints if x > -1])
+            pupilCenterAsNumpyArray = np.array(pupilCenter)
+            if glintCount < numOfGlints:
+                bestGlints[glintCount] = len(ellipses) - 1
+                bestGlintsProps[glintCount] = props
+            else:                
+                worst = -1
+                # Find the worst of the best glints.
+                for current in xrange(glintCount):
+                    if worst == -1 or np.linalg.norm(np.array(bestGlintsProps[current]["Centroid"]) - pupilCenterAsNumpyArray) > np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
+                        worst = current
+                # Compare current blob with the worst glint.
+                if np.linalg.norm(np.array(props["Centroid"]) - pupilCenterAsNumpyArray) < np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
+                    bestGlints[worst] = len(ellipses) - 1
+                    bestGlintsProps[worst] = props
+                
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
 
         # Return the final result.
+        print bestGlints
         return ellipses, centers, bestGlints
-
+    
     def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=30):
         """
         Given an image, return the coordinates of the iris candidates.
