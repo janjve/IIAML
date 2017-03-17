@@ -84,10 +84,18 @@ class EyeFeatureDetector(object):
         pupilMinimum = int(round(math.pi * math.pow(pupilMinimum, 2)))
         pupilMaximum = int(round(math.pi * math.pow(pupilMaximum, 2)))
 
+        
+        # Preprocessing
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(7,7))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_OPEN, kernel)
+    
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(15,15))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)  
+        
         # Create a binary image.
         _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY_INV)
-
+        
         # Find blobs in the input image.
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,
                                                   cv2.CHAIN_APPROX_SIMPLE)
@@ -99,7 +107,7 @@ class EyeFeatureDetector(object):
             props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
                 
             # Is candidate
-            if 500.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.2:
+            if 800.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.3:
                 centers.append(props["Centroid"])
                 if len(blob) > 4:
                     ellipses.append(cv2.fitEllipse(blob))
@@ -145,6 +153,11 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
+        kernel = np.ones((7,7))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
+        kernel = np.ones((2,2))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_ERODE, kernel)
+        
         _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY_INV)
     
@@ -196,14 +209,13 @@ class EyeFeatureDetector(object):
 
         # Get the gradient info from the input image.
         gradient, orientation, magnitude = self.__GetGradientInfo(image)
-
+        print orientation
         # Get the points distribuition around one circle.
         circle = getCircleSamples(pupilCenter, pupilRadius, numOfPoints)
     
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
         
 
         #<!--------------------------------------------------------------------------->
@@ -235,7 +247,10 @@ class EyeFeatureDetector(object):
                                                        (width/2, height/2))
 
         # Copy the threshold image for the second position.
-        grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+        grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)        
+        
+     
+        
         if glintsEllipses == None and irisEllipse == None:
             _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY_INV)
@@ -354,9 +369,12 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
-        
-
+        gradient = np.gradient(grayscale)
+        for i in xrange(grayscale.shape[0]):
+            for j in xrange(grayscale.shape[1]):
+                mag, angle = cv2.cartToPolar(gradient[0][i,j], gradient[1][i,j], angleInDegrees=True)
+                orientation[i,j] = angle[0,0]
+                magnitude[i,j] = mag[0,0]
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->

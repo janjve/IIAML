@@ -52,7 +52,7 @@ def onSlidersChange(self, dummy=None):
     slidersVals["numOfGlints"]  = cv2.getTrackbarPos("numOfGlints", "trackbars")
 
 # Define the input video source.
-uid = 0
+uid = 1
 if args["input"] != None:
     if type(args["input"]) is str and args["input"].isdigit():
         uid = int(args["input"])
@@ -61,13 +61,13 @@ if args["input"] != None:
 
 # Define the detector arguments.
 slidersVals = {}
-slidersVals["pupilThr"] = 0
+slidersVals["pupilThr"] = 80
 slidersVals["pupilMinimum"]  = 10
 slidersVals["pupilMaximum"]  = 50
-slidersVals["glintsThr"] = 255
+slidersVals["glintsThr"] = 250
 slidersVals["glintsMinimum"]  = 1
 slidersVals["glintsMaximum"]  = 10
-slidersVals["numOfGlints"]  = 1
+slidersVals["numOfGlints"]  = 2
 
 # Create the eye feature detector.
 detector = EyeFeatureDetector()

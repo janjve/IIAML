@@ -43,7 +43,7 @@ def onSlidersChange(self, dummy=None):
     slidersVals["pupilMaximum"]  = cv2.getTrackbarPos("pupilMaximum", "trackbars")
 
 # Define the input video source.
-uid = 0
+uid = 1
 if args["input"] != None:
     if type(args["input"]) is str and args["input"].isdigit():
         uid = int(args["input"])
@@ -52,7 +52,7 @@ if args["input"] != None:
 
 # Define the detector arguments.
 slidersVals = {}
-slidersVals["pupilThr"] = 0
+slidersVals["pupilThr"] = 80
 slidersVals["pupilMinimum"]  = 10
 slidersVals["pupilMaximum"]  = 50
 
@@ -75,7 +75,7 @@ capture.addInputVideo(uid, size=(640, 480), framerate=30.)
 # Create a record video object.
 # Tips: You can add a new output video file with the method
 # RecordVideo.addOutputVideo().
-record = RecordVideo(True)
+record = RecordVideo(False)
 record.addOutputVideo("Outputs/" + args["output"], size=(640, 480),
                       framerate=30., isColor=True)
 

@@ -30,16 +30,16 @@ proj.directory-list = [{'dirloc': loc('.'),
                         'watch_for_changes': True}]
 proj.file-type = 'shared'
 proj.launch-config = {loc('ex1.py'): ('project',
-                                      (u'-i "eye03.m4v" -o "Ex101_D01.mp4"',
+                                      (u'-i "eye13.m4v" -o "Ex101_Dawef01.mp4"',
                                        '')),
                       loc('ex2.py'): ('project',
-                                      (u'-o "Ex102_C03.mp4"',
+                                      (u'-i "eye03.m4v" -o "Ex102_C03awefawef.mp4"',
                                        '')),
                       loc('ex3.py'): ('project',
-                                      (u'-i "eye03.m4v" -o "Ex03_A01.mp4"',
+                                      (u'-i "eye13.m4v" -o "Ex103_B02.mp4"',
                                        '')),
                       loc('ex4.py'): ('project',
-                                      (u'-i "eye04.m4v" -o "Ex04_E01.mp4"',
+                                      (u'-i "eye03.m4v" -o "Ex104_E01.mp4"',
                                        '')),
                       loc('ex5.py'): ('project',
                                       (u'-i "eye05.m4v" -o "Ex05_A01.mp4"',
@@ -47,4 +47,4 @@ proj.launch-config = {loc('ex1.py'): ('project',
                       loc('ex6.py'): ('project',
                                       (u'--cascade "Inputs/xml/haarcascade_frontalface_default.xml" --output "Ex06_E01.mp4" --input tyson.jpg',
                                        ''))}
-proj.main-file = loc('ex2.py')
+proj.main-file = loc('ex4.py')
