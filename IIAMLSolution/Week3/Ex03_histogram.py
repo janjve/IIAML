@@ -88,6 +88,8 @@ hist_channel_all[:,0] = hist_channel_r.T
 hist_channel_all[:,1] = hist_channel_g.T
 hist_channel_all[:,2] = hist_channel_b.T
 
+print hist_channel_r.shape
+
 showHistogram(hist_channel_all, 3)
 
 ##

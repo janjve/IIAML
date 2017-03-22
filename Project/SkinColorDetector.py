@@ -50,9 +50,9 @@ class SkinColorDetector(object):
     def getSkinColor(self, image):
         """Given an image, return with the detected human skin."""
         # Create the output variable.
-        lower_value = 0
-        upper_value = 0
-        threshold   = 0
+        lower_value = 10
+        upper_value = 255
+        threshold   = 200
 
         # Create the final result image.
         result = image.copy()
@@ -74,7 +74,20 @@ class SkinColorDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
+        
+        faces = self.__cascade.detectMultiScale(grayscale, 1.3, 5)
+        image_sliced = image[faces[0][1]: faces[0][1] + faces[0][3], faces[0][0]:faces[0][0] + faces[0][2]]
+        image_sliced = cv2.cvtColor(image_sliced, cv2.COLOR_BGR2HSV)
+        
+        channel_r, channel_g, channel_b = cv2.split(image_sliced)
+        hist_channels = np.zeros([256,3])
+        hist_channels[:,0] = cv2.calcHist([channel_r], [0],None, [256], [0, 255]).T
+        hist_channels[:,1] = cv2.calcHist([channel_g], [0],None, [256], [0, 255]).T
+        hist_channels[:,2] = cv2.calcHist([channel_b], [0],None, [256], [0, 255]).T
+        
+        # Histogram
+        hist = self.__getHistogramImage(hist_channels, image.shape[:2])         
+        
         
 
         #<!--------------------------------------------------------------------------->
@@ -83,6 +96,8 @@ class SkinColorDetector(object):
 
         # Create the image with the steps of skin color detector.
         result = self.__getProcessedImage(image, faces, hist, skin)
+        
+
 
         # Return the result processed image.
         return result, faces, threshold, lower_value, upper_value

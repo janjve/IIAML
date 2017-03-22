@@ -47,4 +47,4 @@ proj.launch-config = {loc('ex1.py'): ('project',
                       loc('ex6.py'): ('project',
                                       (u'--cascade "Inputs/xml/haarcascade_frontalface_default.xml" --output "Ex06_E01.mp4" --input tyson.jpg',
                                        ''))}
-proj.main-file = loc('ex4.py')
+proj.main-file = loc('ex6.py')
