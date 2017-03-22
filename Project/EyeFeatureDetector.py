@@ -195,7 +195,6 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
 
         # Return the final result.
-        print bestGlints
         return ellipses, centers, bestGlints
     
     def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=30):
@@ -206,18 +205,20 @@ class EyeFeatureDetector(object):
         lines = []
         points = []
         ellipse = None
-
+        pupilRadius = pupilRadius
         # Get the gradient info from the input image.
         gradient, orientation, magnitude = self.__GetGradientInfo(image)
-        print orientation
+
         # Get the points distribuition around one circle.
         circle = getCircleSamples(pupilCenter, pupilRadius, numOfPoints)
-    
+        
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-        
-
+        for (center, dx, dy) in circle:
+            maxPoint = self.__FindMaxGradientValueOnNormal(magnitude, orientation, center, pupilCenter)
+            points.append(maxPoint)
+        ellipse = cv2.fitEllipse(np.array(points))
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
@@ -341,13 +342,15 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
-        
+        maxVal = -1
+        for i in xrange(len(normalVals)):
+            if maxVal < normalVals[i]:
+                maxVal = normalVals[i]
+                maxPoint = points[i]
 
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
-
         # Return the final result.
         return maxPoint
 
@@ -370,15 +373,18 @@ class EyeFeatureDetector(object):
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
         gradient = np.gradient(grayscale)
-        for i in xrange(grayscale.shape[0]):
-            for j in xrange(grayscale.shape[1]):
-                mag, angle = cv2.cartToPolar(gradient[0][i,j], gradient[1][i,j], angleInDegrees=True)
-                orientation[i,j] = angle[0,0]
-                magnitude[i,j] = mag[0,0]
+        magnitude, orientation = cv2.cartToPolar(gradient[0], gradient[1], angleInDegrees=True)
+        #for i in xrange(grayscale.shape[0]):
+        #    for j in xrange(grayscale.shape[1]):
+        #        
+        #        orientation[i,j] = angle[0,0]
+        #        magnitude[i,j] = mag[0,0]
+        #print mag
+        #print angle
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
-
+        
         # Return the final result.
         return gradient, orientation, magnitude
 
