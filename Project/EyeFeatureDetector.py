@@ -197,7 +197,7 @@ class EyeFeatureDetector(object):
         # Return the final result.
         return ellipses, centers, bestGlints
     
-    def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=30):
+    def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=120):
         """
         Given an image, return the coordinates of the iris candidates.
         """
@@ -205,7 +205,6 @@ class EyeFeatureDetector(object):
         lines = []
         points = []
         ellipse = None
-        pupilRadius = pupilRadius
         # Get the gradient info from the input image.
         gradient, orientation, magnitude = self.__GetGradientInfo(image)
 
@@ -216,8 +215,14 @@ class EyeFeatureDetector(object):
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
         for (center, dx, dy) in circle:
-            maxPoint = self.__FindMaxGradientValueOnNormal(magnitude, orientation, center, pupilCenter)
-            points.append(maxPoint)
+            maxDistance = 150
+            p1 = center
+            p2 = (pupilCenter[0] + dx * maxDistance, pupilCenter[1] + dy * maxDistance)
+            maxPoint = self.__FindMaxGradientValueOnNormal(magnitude, orientation, p1, p2)
+            
+            if not (maxPoint[0] == 0 and maxPoint[1] == 0):
+                points.append(maxPoint)
+
         ellipse = cv2.fitEllipse(np.array(points))
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
@@ -336,6 +341,7 @@ class EyeFeatureDetector(object):
         points = getLineCoordinates(p1, p2)
         try:
             normalVals = magnitude[points[:, 1], points[:, 0]]
+            normalOri = orientation[points[:, 1], points[:, 0]]
         except:
             return maxPoint
     
@@ -343,11 +349,13 @@ class EyeFeatureDetector(object):
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
         maxVal = -1
+        ori1 = np.arctan((p1[0] - p2[0]) / (p1[1] - p2[1])) * 180. / np.pi
         for i in xrange(len(normalVals)):
             if maxVal < normalVals[i]:
-                maxVal = normalVals[i]
-                maxPoint = points[i]
-
+                ori2 = normalOri[i]
+                if np.abs(ori1 - ori2) < 5:
+                    maxVal = normalVals[i]
+                    maxPoint = points[i]
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
@@ -373,14 +381,12 @@ class EyeFeatureDetector(object):
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
         gradient = np.gradient(grayscale)
+        
+        #orientation = np.arctan(gradient[0], gradient[1]) * (180. / np.pi)
+        #magnitude = np.sqrt(np.power(gradient[0], 2) + np.power(gradient[1], 2))
+        
         magnitude, orientation = cv2.cartToPolar(gradient[0], gradient[1], angleInDegrees=True)
-        #for i in xrange(grayscale.shape[0]):
-        #    for j in xrange(grayscale.shape[1]):
-        #        
-        #        orientation[i,j] = angle[0,0]
-        #        magnitude[i,j] = mag[0,0]
-        #print mag
-        #print angle
+        
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
