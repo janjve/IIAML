@@ -79,27 +79,15 @@ class SkinColorDetector(object):
         image_sliced = image[faces[0][1]: faces[0][1] + faces[0][3], faces[0][0]:faces[0][0] + faces[0][2]]
         image_sliced = cv2.cvtColor(image_sliced, cv2.COLOR_BGR2HSV)
         
-        #borderSlice = 50
-        #image_sliced = image_sliced[borderSlice:image_sliced.shape[0]-]
+        borderSlice = 50
+        image_sliced = image_sliced[borderSlice:image_sliced.shape[0]-borderSlice, borderSlice:image_sliced.shape[1] - borderSlice]
         
         channel_r, channel_g, channel_b = cv2.split(image_sliced)
         hist_channels = np.zeros([256,3])
         hist_channels[:,0] = cv2.calcHist([channel_r], [0],None, [256], [0, 255]).T
         hist_channels[:,1] = cv2.calcHist([channel_g], [0],None, [256], [0, 255]).T
         hist_channels[:,2] = cv2.calcHist([channel_b], [0],None, [256], [0, 255]).T
-        """
-        maxHIndex = 0
-        maxHValue = -1
-        sumS = 0
-        sumV = 0
-        for i in xrange(1, 256):
-            
-            if maxHValue < hist_channels[i-1,0]:
-                maxHIndex = i
-                maxHValue = hist_channels[i-1,0]
-            sumS += hist_channels[i-1,1] * i
-            sumV += hist_channels[i-1,2] * i
-        """
+
         sumTotalH = np.sum(hist_channels[:,0]) / 2
         sumTotalS = np.sum(hist_channels[:,1]) / 2
         sumTotalV = np.sum(hist_channels[:,2]) / 2
@@ -109,11 +97,8 @@ class SkinColorDetector(object):
         valueH = -1
         valueS = -1
         valueV = -1
-        #print sumTotalH
-        
         
         for i in xrange(1,256):
-            #print hist_channels[i-1,1]
             if sumTotalH > (sumH + hist_channels[i-1,0]):
                 sumH += hist_channels[i-1,0]
             elif valueH < 0:
@@ -126,16 +111,10 @@ class SkinColorDetector(object):
                 sumV += hist_channels[i-1,2]
             elif valueV < 0:
                     valueV = i                
-        #meanH = sumH / np.sum(hist_channels[:,0])
-        #meanS = sumS / np.sum(hist_channels[:,1])
-        #meanV = sumV / np.sum(hist_channels[:,2])
         
-        # Histogram        
-        
-        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) 
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         intervalRange = 50
-        print (valueH, valueS, valueV)
-        #print valueH
+
         mask = cv2.inRange(image_hsv, (valueH-intervalRange ,valueS-intervalRange,valueV-intervalRange),(valueH+intervalRange ,valueS+intervalRange,valueV+intervalRange))
         
         image_masked = cv2.bitwise_and(image_hsv, image_hsv, mask=mask)
