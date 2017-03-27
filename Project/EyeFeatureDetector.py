@@ -95,7 +95,8 @@ class EyeFeatureDetector(object):
         # Create a binary image.
         #_, thres = cv2.threshold(grayscale, threshold, 255,
         #                         cv2.THRESH_BINARY_INV)
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,11,3)
+        thres = self.__GetAutoThreshold(grayscale)
+        
         #print thres
         # Find blobs in the input image.
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,
@@ -257,15 +258,10 @@ class EyeFeatureDetector(object):
 
         # Copy the threshold image for the second position.
         grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
-        grayscale = cv2.Laplacian(grayscale,cv2.CV_32F, ksize=1)
-        kernel = np.ones((7,7))
-        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
-        kernel = np.ones((2,2))
-        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_ERODE, kernel)
         
-        if glintsEllipses == None and irisEllipse == None:
-            _, thres = cv2.threshold(grayscale, threshold, 255,
-                                 cv2.THRESH_BINARY_INV)
+        if glintsEllipses == None and irisEllipse == None:        
+            thres =self.__GetAutoThreshold(grayscale)            
+            #_, thres = cv2.threshold(grayscale, threshold, 255, cv2.THRESH_BINARY_INV)
         elif irisEllipse == None:
             _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY)
@@ -452,3 +448,8 @@ class EyeFeatureDetector(object):
         self.__ax.draw_artist(self.__line)
         self.__fig.canvas.blit(self.__ax.bbox)
         self.__fig.canvas.flush_events()
+
+    def __GetAutoThreshold(self, grayscale):
+        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,61,4)
+        return thres
+            
