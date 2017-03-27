@@ -149,14 +149,16 @@ class EyeFeatureDetector(object):
         grayscale = image.copy()
         if len(grayscale.shape) == 3:
             grayscale = cv2.cvtColor(grayscale, cv2.COLOR_BGR2GRAY)        
+            grayscale = cv2.Laplacian(grayscale,cv2.CV_8UC1, ksize=1)
         
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-        kernel = np.ones((7,7))
+        
+        kernel = np.ones((5,5))
         grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
         kernel = np.ones((2,2))
-        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_ERODE, kernel)
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_ERODE, kernel)        
         
         _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY_INV)
@@ -253,9 +255,12 @@ class EyeFeatureDetector(object):
                                                        (width/2, height/2))
 
         # Copy the threshold image for the second position.
-        grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)        
-        
-     
+        grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
+        grayscale = cv2.Laplacian(grayscale,cv2.CV_32F, ksize=1)
+        kernel = np.ones((7,7))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
+        kernel = np.ones((2,2))
+        grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_ERODE, kernel)
         
         if glintsEllipses == None and irisEllipse == None:
             _, thres = cv2.threshold(grayscale, threshold, 255,

@@ -36,16 +36,53 @@ ap.add_argument("-i", "--input", required=False, help="Input Video Source")
 ap.add_argument("-o", "--output", required=True, help="Output Video Filename")
 args = vars(ap.parse_args())
 
+def onSlidersChange(self, dummy=None):
+    """ Handle updates when slides have changes."""
+    global slidersVals
+
+    # Pupil trackbar values.
+    slidersVals["pupilThr"] = cv2.getTrackbarPos("pupilThr", "trackbars")
+    slidersVals["pupilMinimum"]  = cv2.getTrackbarPos("pupilMinimum", "trackbars")
+    slidersVals["pupilMaximum"]  = cv2.getTrackbarPos("pupilMaximum", "trackbars")
+
+    # Glints trackbar values.
+    slidersVals["glintsThr"] = cv2.getTrackbarPos("glintsThr", "trackbars")
+    slidersVals["glintsMinimum"]  = cv2.getTrackbarPos("glintsMinimum", "trackbars")
+    slidersVals["glintsMaximum"]  = cv2.getTrackbarPos("glintsMaximum", "trackbars")
+    slidersVals["numOfGlints"]  = cv2.getTrackbarPos("numOfGlints", "trackbars")
+
+
 # Define the input video source.
-uid = 0
+uid = 1
 if args["input"] != None:
     if type(args["input"]) is str and args["input"].isdigit():
         uid = int(args["input"])
     else:
         uid = "Inputs/" + args["input"]
 
+# Define the detector arguments.
+slidersVals = {}
+slidersVals["pupilThr"] = 80
+slidersVals["pupilMinimum"]  = 10
+slidersVals["pupilMaximum"]  = 50
+slidersVals["glintsThr"] = 50
+slidersVals["glintsMinimum"]  = 1
+slidersVals["glintsMaximum"]  = 10
+slidersVals["numOfGlints"]  = 2
+
 # Create the eye feature detector.
 detector = EyeFeatureDetector()
+
+# Create an OpenCV window and some trackbars.
+cv2.namedWindow("trackbars", cv2.WINDOW_NORMAL)
+cv2.createTrackbar("pupilThr", "trackbars", 0, 255, onSlidersChange)
+cv2.createTrackbar("pupilMinimum", "trackbars", 10, 40,  onSlidersChange)
+cv2.createTrackbar("pupilMaximum", "trackbars", 50, 100, onSlidersChange)
+cv2.createTrackbar("glintsThr", "trackbars", 255, 255, onSlidersChange)
+cv2.createTrackbar("glintsMinimum", "trackbars", 1, 10,  onSlidersChange)
+cv2.createTrackbar("glintsMaximum", "trackbars", 10, 20, onSlidersChange)
+cv2.createTrackbar("numOfGlints", "trackbars", 1, 4, onSlidersChange)
+cv2.imshow("trackbars", np.zeros((1, 640), np.uint8))
 
 # Create a capture video object.
 # Tips: You can add a new video capture device or video file with the method
@@ -75,6 +112,30 @@ while True:
 
     # Get the processed image.
     processed = frames.copy()
+
+    # Get the coordinates of the pupil candidates.
+    pupils = detector.getPupil(frames, slidersVals["pupilThr"],
+                               slidersVals["pupilMinimum"],
+                               slidersVals["pupilMaximum"])
+
+    # Update the pupil center.
+    pupilCenter = (0, 0) if pupils[2] == -1 else pupils[1][pupils[2]]
+
+    # Get the coordinates of the glints candidates.
+    glints = detector.getGlints(frames, slidersVals["glintsThr"],
+                                slidersVals["glintsMinimum"],
+                                slidersVals["glintsMaximum"],
+                                slidersVals["numOfGlints"],
+                                pupilCenter)
+
+    # Get the processed image.
+    processed = detector.getProcessedImage(frames, slidersVals["glintsThr"],
+                                           pupilsEllipses=pupils[0],
+                                           pupilsCenters=pupils[1],
+                                           bestPupil=pupils[2],
+                                           glintsEllipses=glints[0],
+                                           glintsCenters=glints[1],
+                                           bestGlints=glints[2])
 
     # Record the processed frames.
     record.writeFrames(processed)
