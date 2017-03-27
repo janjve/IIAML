@@ -93,9 +93,10 @@ class EyeFeatureDetector(object):
         grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)  
         
         # Create a binary image.
-        _, thres = cv2.threshold(grayscale, threshold, 255,
-                                 cv2.THRESH_BINARY_INV)
-        
+        #_, thres = cv2.threshold(grayscale, threshold, 255,
+        #                         cv2.THRESH_BINARY_INV)
+        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,11,3)
+        #print thres
         # Find blobs in the input image.
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,
                                                   cv2.CHAIN_APPROX_SIMPLE)
