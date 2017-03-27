@@ -66,7 +66,7 @@ slidersVals["pupilMaximum"]  = 50
 slidersVals["glintsThr"] = 255
 slidersVals["glintsMinimum"]  = 1
 slidersVals["glintsMaximum"]  = 10
-slidersVals["numOfGlints"]  = 1
+slidersVals["numOfGlints"]  = 2
 
 # Create the eye feature detector.
 detector = EyeFeatureDetector()
