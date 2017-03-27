@@ -188,9 +188,6 @@ class EyeFeatureDetector(object):
         # Return the final result.
         return ellipses, centers, bestGlints
     
-    def getBestGlints():
-        return 1
-    
     def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=120):
         """
         Given an image, return the coordinates of the iris candidates.
