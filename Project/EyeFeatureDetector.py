@@ -160,35 +160,26 @@ class EyeFeatureDetector(object):
         
         _, thres = cv2.threshold(grayscale, threshold, 255,
                                  cv2.THRESH_BINARY_INV)
-    
+        glintProps = []
         # Find blobs in the input image.
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-
         for blob in contours:
             props = self.Props.calcContourProperties(blob, ["centroid", "area", "extend", "circularity"])
             if props["Area"] < 350.0 and props["Circularity"] > 0.2:
                 centers.append(props["Centroid"])
+                glintProps.append(props)
                 if len(blob) > 4:
                         ellipses.append(cv2.fitEllipse(blob))
                 else:
                         ellipses.append(cv2.minAreaRect(blob))
-                        
-            # Not found max number of glints yet.
-            glintCount = len([x for x in bestGlints if x > -1])
-            pupilCenterAsNumpyArray = np.array(pupilCenter)
-            if glintCount < numOfGlints:
-                bestGlints[glintCount] = len(ellipses) - 1
-                bestGlintsProps[glintCount] = props
-            else:                
-                worst = -1
-                # Find the worst of the best glints.
-                for current in xrange(glintCount):
-                    if worst == -1 or np.linalg.norm(np.array(bestGlintsProps[current]["Centroid"]) - pupilCenterAsNumpyArray) > np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
-                        worst = current
-                # Compare current blob with the worst glint.
-                if np.linalg.norm(np.array(props["Centroid"]) - pupilCenterAsNumpyArray) < np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
-                    bestGlints[worst] = len(ellipses) - 1
-                    bestGlintsProps[worst] = props
+        
+        pupilCenterAsNumpyArray = np.array(pupilCenter)
+        if len(ellipses) < numOfGlints:
+            # Is this part right?
+            for i in xrange(len(ellipses)):
+                bestGlints[i] = i
+        else:
+            bestGlints = self.__GetBestGlints(glintProps, pupilCenterAsNumpyArray, numOfGlints)
                 
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
@@ -196,6 +187,9 @@ class EyeFeatureDetector(object):
 
         # Return the final result.
         return ellipses, centers, bestGlints
+    
+    def getBestGlints():
+        return 1
     
     def getIris(self, image, pupilCenter, pupilRadius, numOfPoints=120):
         """
@@ -240,7 +234,8 @@ class EyeFeatureDetector(object):
                           irisLines=None, irisPoints=None):
         """"
         Given an image and some eye feature coordinates, return the processed
-        image.        """
+        image.
+        """
         # Create the output variable
         processed = np.zeros(image.shape, np.uint8)
 
@@ -316,14 +311,37 @@ class EyeFeatureDetector(object):
     #----------------------------------------------------------------------#
     #                   Incomplete Private Class Methods                   #
     #----------------------------------------------------------------------#
-    def __Distance(self, p1, p2):
+    def __GetBestGlints(self, glintProps, pupilCenter, numOfGlints):
         """Get the Euclidean distance between."""
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
-
-        # Remove this command.
-        return 0
+        bestGlints = [-1] * numOfGlints
+        bestGlintsProps = [{}] * numOfGlints
+        
+        pupilCenterAsNumpyArray = np.array(pupilCenter)
+        # Filling bestGlints
+        if not glintProps == []:
+            for center in xrange(len(glintProps)): 
+                glintCount = len([x for x in bestGlints if x > -1])
+                if(glintCount < numOfGlints):
+                    bestGlints[glintCount] = center
+                    bestGlintsProps[glintCount] = glintProps[center]
+                
+        for i in xrange(len(glintProps)):
+            glintCount = len([x for x in bestGlints if x > -1])
+            worst = -1
+            # Find the worst of the best glints.
+            for current in xrange(glintCount):
+                if worst == -1 or np.linalg.norm(np.array(bestGlintsProps[current]["Centroid"]) - pupilCenterAsNumpyArray) > np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
+                    worst = current
+                    
+            # Compare current blob with the worst glint.
+            if np.linalg.norm(np.array(glintProps[i]["Centroid"]) - pupilCenterAsNumpyArray) < np.linalg.norm(np.array(bestGlintsProps[worst]["Centroid"]) - pupilCenterAsNumpyArray):
+                bestGlints[worst] = i
+                bestGlintsProps[worst] = glintProps[i]
+                
+        return bestGlints
 
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
