@@ -150,12 +150,8 @@ class EyeFeatureDetector(object):
         
         grayscale = image.copy()
         if len(grayscale.shape) == 3:
-            grayscale = cv2.cvtColor(grayscale, cv2.COLOR_BGR2GRAY)        
-            #grayscale = cv2.Laplacian(grayscale,cv2.CV_8UC1, ksize=1)
-        
-        #<!--------------------------------------------------------------------------->
-        #<!--                            YOUR CODE HERE                             -->
-        #<!--------------------------------------------------------------------------->
+            grayscale = cv2.cvtColor(grayscale, cv2.COLOR_BGR2GRAY)    
+            
         glintProps = []
 
         #_, thres = cv2.threshold(grayscale, threshold, 255,cv2.THRESH_BINARY_INV)
@@ -165,7 +161,7 @@ class EyeFeatureDetector(object):
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
         for blob in contours:
             props = self.Props.calcContourProperties(blob, ["centroid", "area", "extend", "circularity"])
-            if props["Area"] < 350.0 and props["Circularity"] > 0.2:
+            if props["Area"] < 700.0 and props["Area"]>20 and props["Circularity"] > 0.2:
                 centers.append(props["Centroid"])
                 glintProps.append(props)
                 if len(blob) > 4:
@@ -465,11 +461,13 @@ class EyeFeatureDetector(object):
         return thres
     
     def __GetAutoThresholdGlints(self,grayscale): 
-        grayscale = cv2.GaussianBlur(grayscale, (9,9), 1)
+        #thres = cv2.GaussianBlur(grayscale, (19,19), 1)
         #kernel = np.ones((11,11))
         #thres = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)                   
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,7,11)
-        kernel = np.ones((13,13))
+        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,15,10)    
+        kernel = np.ones((2,2))    
+        thres = cv2.morphologyEx(thres, cv2.MORPH_ERODE, kernel)         
+        kernel = np.ones((10,10))
         thres = cv2.morphologyEx(thres, cv2.MORPH_CLOSE, kernel)        
         return thres        
             
