@@ -95,7 +95,7 @@ class EyeFeatureDetector(object):
         # Create a binary image.
         #_, thres = cv2.threshold(grayscale, threshold, 255,
         #                         cv2.THRESH_BINARY_INV)
-        thres = self.__GetAutoThreshold(grayscale)
+        thres = self.__GetAutoThresholdPupil(grayscale)
         
         #print thres
         # Find blobs in the input image.
@@ -246,7 +246,7 @@ class EyeFeatureDetector(object):
         grayscale = cv2.cvtColor(result, cv2.COLOR_BGR2GRAY)
         
         if glintsEllipses == None and irisEllipse == None:        
-            thres =self.__GetAutoThreshold(grayscale)            
+            thres =self.__GetAutoThresholdPupil(grayscale)            
             #_, thres = cv2.threshold(grayscale, threshold, 255, cv2.THRESH_BINARY_INV)
         elif irisEllipse == None:
             #_, thres = cv2.threshold(grayscale, threshold, 255, cv2.THRESH_BINARY)
@@ -458,15 +458,11 @@ class EyeFeatureDetector(object):
         self.__fig.canvas.blit(self.__ax.bbox)
         self.__fig.canvas.flush_events()
 
-    def __GetAutoThreshold(self, grayscale):    
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV,71,11)        
-        return thres
+    def __GetAutoThresholdPupil(self, grayscale): 
+        threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,20)                              
+        return threshold
     
-    def __GetAutoThresholdGlints(self,grayscale):                 
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,17,11)    
-        kernel = np.ones((3,2))    
-        thres = cv2.morphologyEx(thres, cv2.MORPH_ERODE, kernel)         
-        kernel = np.ones((11,11))
-        thres = cv2.morphologyEx(thres, cv2.MORPH_CLOSE, kernel)        
-        return thres        
+    def __GetAutoThresholdGlints(self,grayscale):
+        threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,11,-20) 
+        return threshold        
             
