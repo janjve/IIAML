@@ -109,7 +109,7 @@ class EyeFeatureDetector(object):
             props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
                 
             # Is candidate
-            if 1000.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.4:
+            if 1200.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.4:
                 centers.append(props["Centroid"])
                 if len(blob) > 4:
                     ellipses.append(cv2.fitEllipse(blob))
@@ -162,12 +162,8 @@ class EyeFeatureDetector(object):
         pupilCenterAsNumpyArray = np.array(pupilCenter)
         for blob in contours:
             props = self.Props.calcContourProperties(blob, ["centroid", "area", "extend", "circularity"])
-<<<<<<< HEAD
-            if props["Area"] < 700.0 and props["Area"]>20 and props["Circularity"] > 0.2:
-=======
             distance = np.linalg.norm(np.array(props["Centroid"]) - pupilCenterAsNumpyArray)
-            if props["Area"] < 350.0 and props["Circularity"] > 0.2 and distance < 100:
->>>>>>> origin/master
+            if props["Area"] < 1000.0 and props["Area"] > 15.0  and props["Circularity"] > 0.2 and distance < 50:
                 centers.append(props["Centroid"])
                 glintProps.append(props)
                 if len(blob) > 4:
@@ -463,17 +459,14 @@ class EyeFeatureDetector(object):
         self.__fig.canvas.flush_events()
 
     def __GetAutoThreshold(self, grayscale):    
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV,61,11)        
+        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV,71,11)        
         return thres
     
-    def __GetAutoThresholdGlints(self,grayscale): 
-        #thres = cv2.GaussianBlur(grayscale, (19,19), 1)
-        #kernel = np.ones((11,11))
-        #thres = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)                   
-        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,15,10)    
-        kernel = np.ones((2,2))    
+    def __GetAutoThresholdGlints(self,grayscale):                 
+        thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,17,11)    
+        kernel = np.ones((3,2))    
         thres = cv2.morphologyEx(thres, cv2.MORPH_ERODE, kernel)         
-        kernel = np.ones((10,10))
+        kernel = np.ones((11,11))
         thres = cv2.morphologyEx(thres, cv2.MORPH_CLOSE, kernel)        
         return thres        
             
