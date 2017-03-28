@@ -159,9 +159,15 @@ class EyeFeatureDetector(object):
 
         # Find blobs in the input image.
         _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
+        pupilCenterAsNumpyArray = np.array(pupilCenter)
         for blob in contours:
             props = self.Props.calcContourProperties(blob, ["centroid", "area", "extend", "circularity"])
+<<<<<<< HEAD
             if props["Area"] < 700.0 and props["Area"]>20 and props["Circularity"] > 0.2:
+=======
+            distance = np.linalg.norm(np.array(props["Centroid"]) - pupilCenterAsNumpyArray)
+            if props["Area"] < 350.0 and props["Circularity"] > 0.2 and distance < 100:
+>>>>>>> origin/master
                 centers.append(props["Centroid"])
                 glintProps.append(props)
                 if len(blob) > 4:
@@ -169,14 +175,14 @@ class EyeFeatureDetector(object):
                 else:
                         ellipses.append(cv2.minAreaRect(blob))
         
-        pupilCenterAsNumpyArray = np.array(pupilCenter)
-        if len(ellipses) < numOfGlints:
-            # Is this part right?
-            for i in xrange(len(ellipses)):
+        i = 0
+        if len(ellipses) <= numOfGlints:
+            for ell in ellipses:
                 bestGlints[i] = i
+                i += 1
         else:
             bestGlints = self.__GetBestGlints(glintProps, pupilCenterAsNumpyArray, numOfGlints)
-                
+        print i
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
