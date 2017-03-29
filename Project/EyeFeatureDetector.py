@@ -109,7 +109,7 @@ class EyeFeatureDetector(object):
             props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
                 
             # Is candidate
-            if 1200.0 < props["Area"] < 8000.0 and 0.2 < props["Extend"] < 1.2 and props["Circularity"] > 0.4:
+            if 1000.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9 and props["Circularity"] > 0.4:
                 centers.append(props["Centroid"])
                 if len(blob) > 4:
                     ellipses.append(cv2.fitEllipse(blob))
