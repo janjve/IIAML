@@ -59,7 +59,7 @@ if args["input"] != None:
 
 # Define the detector arguments.
 slidersVals = {}
-slidersVals["pupilThr"] = 0
+slidersVals["pupilThr"] = 80
 slidersVals["pupilMinimum"]  = 10
 slidersVals["pupilMaximum"]  = 50
 
