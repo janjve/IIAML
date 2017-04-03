@@ -61,7 +61,15 @@ def evaluate_algorithm(dataset, algorithm, split):
     #<---                     Your code here                         --->
     #<------------------------------------------------------------------>    
     
-    return 
+    test_set, train_set = train_test_split(dataset, split)
+    
+    predicted = algorithm(train_set, test_set)
+    print test_set
+    print train_set
+    actual = [row[-1] for row in test_set]
+    rmse = rmse_metric(actual, predicted)
+    
+    return (rmse, predicted)
     #<------------------------------------------------------------------>
     #<---                                                            --->
     #<------------------------------------------------------------------>
@@ -124,12 +132,12 @@ split = 0.6
 #<------------------------------------------------------------------>
 #<---                     Your code here                         --->
 #<------------------------------------------------------------------>
-evaluate_algorithm(dataset, linear_regression, split)
+(test, predicted) = evaluate_algorithm(dataset, linear_regression, split)
 
 #<------------------------------------------------------------------>
 #<---                                                            --->
 #<------------------------------------------------------------------>
 
 # plot results
-#plot_outputs(test, predicted)
-#plt.show()
+plot_outputs(test, predicted)
+plt.show()

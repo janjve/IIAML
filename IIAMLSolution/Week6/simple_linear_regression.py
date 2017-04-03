@@ -35,8 +35,8 @@ def evaluate_algorithm(dataset, algorithm):
 		row_copy = list(row)
 		row_copy[-1] = None
 		test_set.append(row_copy)
+		
 	predicted = algorithm(dataset, test_set)
-	print(predicted)
 	actual = [row[-1] for row in dataset]
 	rmse = rmse_metric(actual, predicted)
 	return rmse, predicted
@@ -86,7 +86,27 @@ def simple_linear_regression(train, test):
 dataset = [[1, 1], [2, 3], [3, 3], [4, 2], [5, 5]]
 
 rmse, predicted = evaluate_algorithm(dataset, simple_linear_regression)
+
+
+# Implementation
+
+
+# 2
+actual = [x[1] for x in dataset]
+mean_actual = mean(actual)
+mean_pred = mean(predicted)
+variance_actual = variance(actual, mean_actual)
+variance_pred = variance(predicted, mean_pred)
+
+# 3
+covariance_actual_pred = covariance(actual, mean_actual, predicted, mean_pred)
+
+# Printing
+print "--------------"
 print('RMSE: %.3f' % (rmse))
+print('Mean (in/pred): %.3f / %.3f' % (mean_actual, mean_pred))
+print('Variance (in/pred): %.3f / %.3f' % (variance_actual, variance_pred))
+print('Covariance: %.3f' % (covariance_actual_pred))
 
 # plot results
 PlotOutputs(dataset, predicted)
