@@ -12,4 +12,4 @@ proj.file-list = [loc('diabetes-dataset.csv'),
                   loc('simple_linear_regression.pyc'),
                   loc('simple_linear_regression_insurance.py')]
 proj.file-type = 'shared'
-proj.main-file = loc('simple_linear_regression_insurance.py')
+proj.main-file = loc('logistic_regression_diabetes.py')

@@ -61,15 +61,12 @@ def evaluate_algorithm(dataset, algorithm, split):
     #<---                     Your code here                         --->
     #<------------------------------------------------------------------>    
     
-    test_set, train_set = train_test_split(dataset, split)
-    
-    predicted = algorithm(train_set, test_set)
-    print test_set
-    print train_set
+    train_set, test_set = train_test_split(dataset, split)
+    prediction = algorithm(train_set, test_set)
     actual = [row[-1] for row in test_set]
-    rmse = rmse_metric(actual, predicted)
+    rmse = rmse_metric(actual, prediction)
     
-    return (rmse, predicted)
+    return (rmse, test_set, prediction)
     #<------------------------------------------------------------------>
     #<---                                                            --->
     #<------------------------------------------------------------------>
@@ -132,8 +129,17 @@ split = 0.6
 #<------------------------------------------------------------------>
 #<---                     Your code here                         --->
 #<------------------------------------------------------------------>
-(test, predicted) = evaluate_algorithm(dataset, linear_regression, split)
+rmse, test, predicted, percentile = (100000., [], [], -1)
 
+for percent in range(5, 95, 1):
+    split = percent / 100.
+    (r, t, p) = evaluate_algorithm(dataset, linear_regression, split)
+    print str(percent) + " % split RMSE: " + str(r)
+    if r < rmse:
+        rmse, test, predicted = (r, t, p)
+        percentile = percent
+
+print "optimal RMSE (" + str(percentile) + "): ", str(rmse)
 #<------------------------------------------------------------------>
 #<---                                                            --->
 #<------------------------------------------------------------------>

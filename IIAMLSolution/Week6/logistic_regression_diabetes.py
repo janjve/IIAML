@@ -1,6 +1,8 @@
 # Logistic Regression on Diabetes Dataset
 from random import seed
 from random import randrange
+import matplotlib.pyplot as plt
+import numpy as np
 from csv import reader
 from math import exp
 
@@ -61,6 +63,8 @@ def accuracy_metric(actual, predicted):
 def evaluate_algorithm(dataset, algorithm, n_folds, *args):
     folds = cross_validation_split(dataset, n_folds)
     scores = list()
+    predictions = list()
+    test_sets = list()
     for fold in folds:
         train_set = list(folds)
         train_set.remove(fold)
@@ -69,12 +73,15 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
         for row in fold:
             row_copy = list(row)
             test_set.append(row_copy)
-            row_copy[-1] = None
+            #row_copy[-1] = None
         predicted = algorithm(train_set, test_set, *args)
         actual = [row[-1] for row in fold]
         accuracy = accuracy_metric(actual, predicted)
         scores.append(accuracy)
-    return scores
+        predictions.append(predicted)
+        test_sets.append(test_set)
+        
+    return (scores, test_sets, predictions)
 
 # Make a prediction with coefficients
 def predict(row, coefficients):
@@ -117,8 +124,33 @@ minmax = dataset_minmax(dataset)
 normalize_dataset(dataset, minmax)
 # evaluate algorithm
 n_folds = 5
-l_rate = 0.1
+l_rate = 0.50
 n_epoch = 100
-scores = evaluate_algorithm(dataset, logistic_regression, n_folds, l_rate, n_epoch)
+scores, test_sets ,predictions = evaluate_algorithm(dataset, logistic_regression, n_folds, l_rate, n_epoch)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+
+# plot the classes from contrived dataset
+x_class_1 = []
+y_class_1 = []
+x_class_2 = []
+y_class_2 = []
+
+print test_sets[0][1]
+#print predictions[0]
+#print test_sets[0][-1]
+
+for i, row in enumerate(test_sets[0]):
+    x_class_2.append(i)
+    y_class_2.append(row[-1])
+    x_class_1.append(i)
+    y_class_1.append(predictions[0][i])
+
+plt.plot(x_class_1, y_class_1, 'bo', label = 'Prediction')
+plt.plot(x_class_2, y_class_2, 'ro', label = 'Actual')
+#plt.xlim(np.min(x_class_1 + x_class_2), np.max(x_class_1 + x_class_2))
+plt.xlim(0,50)
+plt.ylim(np.min(y_class_1 + y_class_2), np.max(y_class_1 + y_class_2))
+plt.legend()
+plt.title('Classification using Logistic Regression')
+plt.show()
