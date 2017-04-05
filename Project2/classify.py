@@ -68,8 +68,8 @@ model = joblib.load(args["model"])
 
 # initialize the HOG descriptor
 hog = HOG(orientations=18, 
-          pixelsPerCell=(10, 10), 
-          cellsPerBlock=(1, 1), 
+          pixelsPerCell=(2, 2), 
+          cellsPerBlock=(2, 2), 
           normalize=True)
 
 # load the eye and scene video streams
@@ -134,7 +134,7 @@ while(True):
 		
 			# if the width is at least 7 pixels and the height is at least 20 pixels, the contour
 			# is likely a digit
-			if w >= 7 and h >= 20:
+			if w >= 7 and w < 250 and h >= 60 and h < 250:
 				# crop the ROI and then threshold the grayscale ROI to reveal the digit
 				roi = gray[y:y + h, x:x + w]
 				thresh = roi.copy()
@@ -151,11 +151,18 @@ while(True):
 				#<------------------------------------------------------------>				
 				
 				# extract features from the image and classify it
-
-
-		
-				# draw a rectangle around the digit, the show what the digit was classified as
+				hist = hog.describe(thresh)
+				prediction = model.predict(hist)
 				
+				# draw a rectangle around the digit, the show what the digit was classified as
+				is_candidate = False
+				if prediction[0] == 1 and h / w > 5:
+					is_candidate = True
+				elif h / w > 0.5 and h / w < 1.5:
+					is_candidate = True
+				if is_candidate:
+					cv2.rectangle(scene_image, (x,y), (x+w,y+h), (0,255,0))
+					cv2.putText(scene_image, str(prediction[0]), (x,y), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0))
 				
 				#<------------------------------------------------------------>
 				#<                                                            >

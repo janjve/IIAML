@@ -7,9 +7,11 @@ from sklearn.svm import LinearSVC
 from sklearn import svm
 from DataAndDescription.descriptors import HOG
 from DataAndDescription.utils import dataset
+from skimage import exposure
 import matplotlib.pyplot as plt
 import argparse
 import cv2
+import time
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -23,8 +25,8 @@ data = []
 
 # initialize the HOG descriptor
 hog = HOG(orientations=18, 
-          pixelsPerCell=(10, 10), 
-          cellsPerBlock=(1, 1), 
+          pixelsPerCell=(2, 2), 
+          cellsPerBlock=(2, 2), 
           normalize=True)
 
 # loop over the images
@@ -34,9 +36,17 @@ for image in digits:
 	image = dataset.center_extent(image, (20, 20))
 	
 	# describe the image and update the data matrix
+	
 	hist = hog.describe(image)
+	#hist, visualize = hog.describe(image)
+	#visualize = exposure.rescale_intensity(visualize, out_range=(0,255))
+	#visualize = visualize.astype("uint8")
 	data.append(hist)
-
+	#cv2.imshow("digit", cv2.resize(image, (200,200)))
+	#cv2.imshow("hog", cv2.resize(visualize, (200,200)))
+	#cv2.waitKey(500)
+	
+cv2.destroyAllWindows()
 # train the model
 model = LinearSVC(random_state=42)
 model.fit(data, target)
