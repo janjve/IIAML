@@ -39,10 +39,10 @@ def callback(value):
 def setup_roibars(ImageShape):
 	cv2.namedWindow("ROIBars", 0)
 
-	cv2.createTrackbar("Left", "ROIBars", 0, ImageShape[0], callback)
-	cv2.createTrackbar("Right", "ROIBars", 0, ImageShape[0], callback)    
-	cv2.createTrackbar("Up", "ROIBars", 0, ImageShape[1], callback)
-	cv2.createTrackbar("Down", "ROIBars", 0, ImageShape[1], callback)
+	cv2.createTrackbar("Left", "ROIBars", 0, ImageShape[1], callback)
+	cv2.createTrackbar("Right", "ROIBars", 0, ImageShape[1], callback)    
+	cv2.createTrackbar("Up", "ROIBars", 0, ImageShape[0], callback)
+	cv2.createTrackbar("Down", "ROIBars", 0, ImageShape[0], callback)
 	cv2.createTrackbar("Pause", "ROIBars", 0, 1, callback)
 
 def get_roibar_values():
@@ -98,14 +98,16 @@ while(True):
 
 	# draw ROI
 	result = eye_image.copy()
-	cv2.line(result, (XMin, 0), (XMin, result.shape[1]), [255,255,255], thickness=1)
-	cv2.line(result, (XMax, 0), (XMax, result.shape[1]), [255,255,255], thickness=1)
-	cv2.line(result, (0, YMin), (result.shape[0], YMin), [255,255,255], thickness=1)
-	cv2.line(result, (0, YMax), (result.shape[0], YMax), [255,255,255], thickness=1)	
+	cv2.line(result, (XMin, 0), (XMin, result.shape[0]), [255,255,255], thickness=1)
+	cv2.line(result, (XMax, 0), (XMax, result.shape[0]), [255,255,255], thickness=1)
+	cv2.line(result, (0, YMin), (result.shape[1], YMin), [255,255,255], thickness=1)
+	cv2.line(result, (0, YMax), (result.shape[1], YMax), [255,255,255], thickness=1)	
 
 	if grabFlag:
 		# crop image
+		#print eye_image
 		cropped_frame = eye_image[YMin:YMax, XMin:XMax]
+		#print cropped_frame
 		pupilX , pupilY = DetectPupil(cropped_frame)
 		cv2.circle(eye_image, (XMin + int(pupilX), YMin + int(pupilY)), 5, (0, 255, 0), 1)
 		cv2.circle(cropped_frame, (int(pupilX), int(pupilY)), 3, (0, 0, 255), -1)
@@ -156,13 +158,17 @@ while(True):
 				
 				# draw a rectangle around the digit, the show what the digit was classified as
 				is_candidate = False
-				if prediction[0] == 1 and h / w > 5:
+				if prediction[0] == 1 and h / w > 3:
 					is_candidate = True
-				elif h / w > 0.5 and h / w < 1.5:
+				elif h / w > 0.4 and h / w < 2.5:
 					is_candidate = True
 				if is_candidate:
-					cv2.rectangle(scene_image, (x,y), (x+w,y+h), (0,255,0))
-					cv2.putText(scene_image, str(prediction[0]), (x,y), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0))
+					if gaze_point[0] > x and gaze_point[0] < x + w and gaze_point[1] > y and gaze_point[1] < y + h:
+						cv2.rectangle(scene_image, (x,y), (x+w,y+h), (0,255,0), 2)
+						cv2.putText(scene_image, str(prediction[0]), (x,y), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0))
+					else:
+						cv2.rectangle(scene_image, (x,y), (x+w,y+h), (0,0,255))					
+						
 				
 				#<------------------------------------------------------------>
 				#<                                                            >

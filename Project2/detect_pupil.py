@@ -2,12 +2,17 @@
 import argparse
 import imutils
 import cv2
+import math
+from RegionProps import RegionProps
 
 def DetectPupil(cropped_frame):
     #<------------------------------------------------------------>
     #<---------- Implement your pupil detector here -------------->
     #<------------------------------------------------------------>
     # Create the output variable.
+    
+    Props = RegionProps()
+    
     bestPupil = -1
     bestProps = {}
     ellipses  = []
@@ -22,7 +27,7 @@ def DetectPupil(cropped_frame):
     y = []
 
     # Grayscale image.
-    grayscale = image.copy()
+    grayscale = cropped_frame.copy()
     if len(grayscale.shape) == 3:
         grayscale = cv2.cvtColor(grayscale, cv2.COLOR_BGR2GRAY)
 
@@ -31,11 +36,11 @@ def DetectPupil(cropped_frame):
     pupilMaximum = int(round(math.pi * math.pow(pupilMaximum, 2)))
 
     # Preprocessing
-    #kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(7,7))
-    #grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_OPEN, kernel)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(7,7))
+    grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_OPEN, kernel)
 
-    #kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(15,15))
-    #grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(15,15))
+    grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
     
     # Create a binary image.
     thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,20)                              
@@ -45,10 +50,10 @@ def DetectPupil(cropped_frame):
                                               cv2.CHAIN_APPROX_SIMPLE)
 
     for blob in contours:
-        props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
+        props = Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
             
         # Is candidate
-        if 1000.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9 and props["Circularity"] > 0.4:
+        if 500.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9 and props["Circularity"] > 0.4:
             centers.append(props["Centroid"])
             if len(blob) > 4:
                 ellipses.append(cv2.fitEllipse(blob))
@@ -65,5 +70,7 @@ def DetectPupil(cropped_frame):
                 bestPupil = len(ellipses) - 1
     
     # Return the final result.
-    #return ellipses, centers, bestPupil
-    return centers[bestPupil]
+    if len(centers):
+        return centers[bestPupil]
+    else:
+        return (0,0) # No pupil candidate found
