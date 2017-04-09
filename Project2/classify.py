@@ -153,6 +153,8 @@ while(True):
 				#<------------------------------------------------------------>				
 				
 				# extract features from the image and classify it
+				
+				
 				hist = hog.describe(thresh)
 				prediction = model.predict(hist)
 				
@@ -163,7 +165,9 @@ while(True):
 				elif h / w > 0.4 and h / w < 2.5:
 					is_candidate = True
 				if is_candidate:
-					if gaze_point[0] > x and gaze_point[0] < x + w and gaze_point[1] > y and gaze_point[1] < y + h:
+					error_calibrated_w = w * 0.3 # gaze_error_tolerence_w
+					error_calibrated_h = h * 0.3 # gaze_error_tolerence_h
+					if gaze_point[0] > x - error_calibrated_w and gaze_point[0] < x + w + error_calibrated_w and gaze_point[1] > y - error_calibrated_h and gaze_point[1] < y + h + error_calibrated_h:
 						cv2.rectangle(scene_image, (x,y), (x+w,y+h), (0,255,0), 2)
 						cv2.putText(scene_image, str(prediction[0]), (x,y), cv2.FONT_HERSHEY_COMPLEX, 2, (0,255,0))
 					else:
