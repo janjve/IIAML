@@ -106,10 +106,9 @@ class EyeFeatureDetector(object):
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
         for blob in contours:
-            props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
-                
+            props = self.Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity","compactness","epr"])   
             # Is candidate
-            if 1000.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9 and props["Circularity"] > 0.4:
+            if 500.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9:                                
                 centers.append(props["Centroid"])
                 if len(blob) > 4:
                     ellipses.append(cv2.fitEllipse(blob))
@@ -119,16 +118,22 @@ class EyeFeatureDetector(object):
                     ellipses.append(cv2.minAreaRect(blob))
                     x.append(props["Area"])
                     y.append(props["Extend"])
+                compactnessRatio =  props["Compactness"]
+                epr = props ["Epr"]
+                print epr
+                print compactnessRatio
                 
-                # Update best props
-                if bestPupil == -1 or props["Circularity"] > bestProps["Circularity"]: # Append other checks.
-                    bestProps = props
-                    bestPupil = len(ellipses) - 1
+                if props["Circularity"] > 0.5 and compactnessRatio>0.5 and epr>0.5:
+                # Update best props                      
+                    if bestPupil == -1:
+                        bestProps = props                                        
+                        bestPupil = len(ellipses) - 1     
+                    else: 
+                        if props["Circularity"] > bestProps["Circularity"]:
+                            bestProps = props                                        
+                            bestPupil = len(ellipses) - 1                           
+                                               
         
-        #self.__plotData(x, y, bestPupil)
-        #<!--------------------------------------------------------------------------->
-        #<!--                                                                       -->
-        #<!--------------------------------------------------------------------------->
 
         # Return the final result.
         return ellipses, centers, bestPupil
@@ -458,8 +463,10 @@ class EyeFeatureDetector(object):
         self.__fig.canvas.blit(self.__ax.bbox)
         self.__fig.canvas.flush_events()
 
-    def __GetAutoThresholdPupil(self, grayscale): 
-        threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,20)                              
+    def __GetAutoThresholdPupil(self, grayscale):                   
+        threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,30)    
+        threshold = cv2.morphologyEx(threshold,cv2.MORPH_DILATE,np.ones((11, 11)))              
+        threshold = cv2.morphologyEx(threshold,cv2.MORPH_ERODE,np.ones((9, 9)))      
         return threshold
     
     def __GetAutoThresholdGlints(self,grayscale):
