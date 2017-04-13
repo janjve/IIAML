@@ -3,6 +3,7 @@ import argparse
 import imutils
 import cv2
 import math
+import numbers as np
 from RegionProps import RegionProps
 
 def DetectPupil(cropped_frame):
@@ -42,32 +43,38 @@ def DetectPupil(cropped_frame):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(15,15))
     grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)
     
-    # Create a binary image.
-    thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,20)                              
-    
+    # Create a binary image.                              
+    thres = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,30)    
+    thres = cv2.morphologyEx(thres,cv2.MORPH_DILATE,(13, 13))              
+    thres = cv2.morphologyEx(thres,cv2.MORPH_ERODE,(5, 5))   
+    cv2.imshow("Thres", thres)
     # Find blobs in the input image.
     _, contours, hierarchy = cv2.findContours(thres, cv2.RETR_LIST,
                                               cv2.CHAIN_APPROX_SIMPLE)
 
     for blob in contours:
-        props = Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity"])
-            
-        # Is candidate
-        if 500.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9 and props["Circularity"] > 0.4:
+        props = Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity","compactness","epr"])   
+    # Is candidate
+        if 1000.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9:                                
             centers.append(props["Centroid"])
             if len(blob) > 4:
                 ellipses.append(cv2.fitEllipse(blob))
                 x.append(props["Area"])
-                y.append(props["Extend"])
+                y.append(props["Extend"])                    
             else:
                 ellipses.append(cv2.minAreaRect(blob))
                 x.append(props["Area"])
                 y.append(props["Extend"])
-            
-            # Update best props
-            if bestPupil == -1 or props["Circularity"] > bestProps["Circularity"]: # Append other checks.
-                bestProps = props
-                bestPupil = len(ellipses) - 1
+        if props["Circularity"] > 0.5 and props["Compactness"]>0.5 and props ["Epr"]>0.5:
+        # Update best props                      
+            if bestPupil == -1:
+                bestProps = props                                        
+                bestPupil = len(ellipses) - 1     
+            else: 
+                if props["Circularity"] > bestProps["Circularity"]:
+                    bestProps = props                                        
+                    bestPupil = len(ellipses) - 1                           
+
     
     # Return the final result.
     if len(centers):

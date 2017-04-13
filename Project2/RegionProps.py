@@ -21,6 +21,7 @@ __version__ = "$Revision: 2017021301 $"
 ########################################################################
 import cv2
 import math
+import numpy as np
 
 ########################################################################
 class RegionProps(object):
@@ -98,7 +99,13 @@ class RegionProps(object):
             elif prop == "isconvex":
                 props.update({"IsConvex" : self.__IsConvex(contour)})
             elif prop == "circularity":
-                props.update({"Circularity" : self.__CalcCircularity(contour)})                
+                props.update({"Circularity" : self.__CalcCircularity(contour)})   
+            elif prop == "compactness":
+                props.update({"Compactness" : self.__CalcCompactness(contour)}) 
+            elif prop == "eqdiameter":
+                    props.update({"EqDiameter" : self.__CalcEqDiameter(contour)})
+            elif prop == "epr":
+                    props.update({"Epr" : self.__CalcExtremePointRation(contour)})                 
             elif failInInput:
                 pass
             else:
@@ -160,3 +167,34 @@ class RegionProps(object):
             return 4 * math.pi * area / perimeter ** 2
         else:
             return 0
+    def __CalcEqDiameter(self,contour):
+        area = cv2.contourArea(contour)        
+        if area > 0:
+            equi_diameter = np.sqrt(4*area/np.pi)
+            return equi_diameter
+        else:
+            return 0 
+    
+    def __CalcExtremePointRation(self,cnt):
+        def distance(p0, p1):
+            return np.sqrt(np.power((p0[0] - p1[0]),2) + np.power((p0[1] - p1[1]),2))        
+        leftmost = tuple(cnt[cnt[:,:,0].argmin()][0])          
+        rightmost = tuple(cnt[cnt[:,:,0].argmax()][0])           
+        topmost = tuple(cnt[cnt[:,:,1].argmin()][0])            
+        bottommost = tuple(cnt[cnt[:,:,1].argmax()][0])
+        dist1 = distance(leftmost,rightmost)
+        dist2 = distance(topmost,bottommost)
+        if (dist1>dist2):
+            return dist2/dist1
+        else:
+            return dist1/dist2
+    
+    
+    
+    def __CalcCompactness(self, contour):
+        area = self.__CalcArea(contour)
+        _,_,w,h = cv2.boundingRect(contour)
+        if area > 0:
+            return (area / w * h) / area
+        else:
+            return 0         
