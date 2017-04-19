@@ -55,7 +55,7 @@ def DetectPupil(cropped_frame):
     for blob in contours:
         props = Props.calcContourProperties(blob,["centroid", "area", "extend", "circularity","compactness","epr"])   
     # Is candidate
-        if 1000.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9:                                
+        if 500.0 < props["Area"] and props["Area"] < 8000.0 and 0.65 < props["Extend"] and props["Extend"] < 0.9:                                
             centers.append(props["Centroid"])
             if len(blob) > 4:
                 ellipses.append(cv2.fitEllipse(blob))
@@ -65,7 +65,6 @@ def DetectPupil(cropped_frame):
                 ellipses.append(cv2.minAreaRect(blob))
                 x.append(props["Area"])
                 y.append(props["Extend"])
-        if props["Circularity"] > 0.5 and props["Compactness"]>0.5 and props ["Epr"]>0.5:
         # Update best props                      
             if bestPupil == -1:
                 bestProps = props                                        

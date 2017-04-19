@@ -38,7 +38,7 @@ for row in data:
 
 flattened_data = np.array(flattened_data)
 (trainData, testData, trainLabels, testLabels) = train_test_split(
-    flattened_data, target.astype("int"), test_size=0.33)
+    flattened_data, target.astype("int"), test_size=0.00)
 
 # train the Deep Belief Network with 784 input units (i.e., the flattened,
 # 28 x 28 grayscale images), 300 hidden units, and 10 output units (one for

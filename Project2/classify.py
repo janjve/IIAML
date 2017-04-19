@@ -154,11 +154,13 @@ while(True):
 				
 				# extract features from the image and classify it
 				
-				
-				#hist = hog.describe(thresh)
+				# dbn
 				flattened = np.array([thresh.flatten()])
 				prediction = model.predict(flattened)
 				
+				# svn
+				#hist = hog.describe(thresh)
+				#prediction = model.predict(hist)
 				
 				# draw a rectangle around the digit, the show what the digit was classified as
 				is_candidate = False
