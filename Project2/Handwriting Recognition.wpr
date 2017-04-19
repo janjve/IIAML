@@ -13,7 +13,7 @@ proj.directory-list = [{'dirloc': loc('.'),
 proj.file-list = [loc('RegionProps.py')]
 proj.file-type = 'shared'
 proj.launch-config = {loc('classify.py'): ('project',
-        (u'--model models/svm.cpickle --scene_video images/scene_scenario_1.mp4 --eye_video images/eye_scenario_1.mp4',
+        (u'--model models/dbn.cpickle --scene_video images/scene_scenario_1.mp4 --eye_video images/eye_scenario_1.mp4',
          '')),
                       loc('train.py'): ('project',
         (u'--dataset data/digits.csv --model models/svm.cpickle',

@@ -39,10 +39,10 @@ def callback(value):
 def setup_roibars(ImageShape):
 	cv2.namedWindow("ROIBars", 0)
 
-	cv2.createTrackbar("Left", "ROIBars", 0, ImageShape[1], callback)
-	cv2.createTrackbar("Right", "ROIBars", 0, ImageShape[1], callback)    
-	cv2.createTrackbar("Up", "ROIBars", 0, ImageShape[0], callback)
-	cv2.createTrackbar("Down", "ROIBars", 0, ImageShape[0], callback)
+	cv2.createTrackbar("Left", "ROIBars", 400, ImageShape[1], callback)
+	cv2.createTrackbar("Right", "ROIBars", 880, ImageShape[1], callback)    
+	cv2.createTrackbar("Up", "ROIBars", 150, ImageShape[0], callback)
+	cv2.createTrackbar("Down", "ROIBars", 400, ImageShape[0], callback)
 	cv2.createTrackbar("Pause", "ROIBars", 0, 1, callback)
 
 def get_roibar_values():
@@ -145,8 +145,8 @@ while(True):
 				thresh = cv2.bitwise_not(thresh)
 		
 				# deskew the image center its extent
-				thresh = dataset.deskew(thresh, 20)
-				thresh = dataset.center_extent(thresh, (20, 20))
+				thresh = dataset.deskew(thresh, 28)
+				thresh = dataset.center_extent(thresh, (28, 28))
 		
 				#<------------------------------------------------------------>
 				#<---------- Describe HOG features and Classify Digit -------->
@@ -155,8 +155,10 @@ while(True):
 				# extract features from the image and classify it
 				
 				
-				hist = hog.describe(thresh)
-				prediction = model.predict(hist)
+				#hist = hog.describe(thresh)
+				flattened = np.array([thresh.flatten()])
+				prediction = model.predict(flattened)
+				
 				
 				# draw a rectangle around the digit, the show what the digit was classified as
 				is_candidate = False

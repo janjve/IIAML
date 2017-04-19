@@ -11,6 +11,7 @@ from nolearn.dbn import DBN
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
+from sklearn.externals import joblib
 
 def plot_error(epochs, errors_fine_tune):
     plt.plot(epochs, errors_fine_tune, '-', linewidth=2.0, label='error')
@@ -49,7 +50,9 @@ dbn = DBN(
     epochs=10,
     verbose=1)
 
+
 # train the model
+
 losses_fine_tune, errors_fine_tune, epochs = dbn.fit(trainData, trainLabels)
 epochs = np.arange(1, epochs + 1)
 
@@ -62,6 +65,7 @@ predictions = dbn.predict(testData)
 print(classification_report(testLabels, predictions))
 
 # randomly select a few digits
+"""
 for i in np.random.choice(np.arange(0, len(testLabels)), size=(10,)):
     # classify the digit
     prediction = dbn.predict(np.atleast_2d(testData[i]))
@@ -75,3 +79,5 @@ for i in np.random.choice(np.arange(0, len(testLabels)), size=(10,)):
     print("[INFO] Predicted: {}, Actual: {}".format(prediction[0], testLabels[i]))
     cv2.imshow("Digit", image)
     cv2.waitKey(0)
+"""
+#joblib.dump(dbn, "models/dbn.cpickle")
