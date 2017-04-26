@@ -176,12 +176,12 @@ class Assignment2(object):
         filename = self.__path + "Videos/ITUStudent.avi"
         image2 = cv2.imread(self.__path + "Images/ITUMap.png")        
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
-                                             [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
-                                             [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])
+        #homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
+        #                                     [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
+        #                                     [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])
+        homography = np.load(self.__path + "Outputs/homography_best.npy")
         
         # Load tracking data.
-        
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
         lenght   = dataFile.shape[0]
 
@@ -420,12 +420,16 @@ class Assignment2(object):
 
         # Estimate the homography.
         H, points = SIGBTools.GetHomographyFromMouse(image1, image2, 4)
-
+        H = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
+                                   [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
+                                                 [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])        
+        np.save(self.__path + "Outputs/homography1.npy", H)
+        
         # Draw the homography transformation.
         h, w    = image2.shape[0:2]
         overlay = cv2.warpPerspective(image1, H, (w, h))
         result  = cv2.addWeighted(image2, 0.5, overlay, 0.5, 0)
-        print H
+        
         # Show the result image.
         cv2.imshow("SimpleTextureMap", result)
         cv2.waitKey(0)
