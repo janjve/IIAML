@@ -101,7 +101,11 @@ class Assignment2(object):
     def __ShowFloorTrackingData(self):
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")        
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
+        homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
+                               [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
+                               [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])        
 
         # Load tracking data.
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
@@ -121,9 +125,16 @@ class Assignment2(object):
                 box = boxes[j]
                 cv2.rectangle(image, box[0], box[1], boxColors[j])
 
+            homogenenous_coordinate = np.append(boxes[2][1], [1])
+            point2 = (np.dot(homography, homogenenous_coordinate))
+            point2 = point2[:2] / point2[2]
             # Show the final processed image.
-            cv2.imshow("Ground Floor", image)
+            cv2.circle(image2, (int(point2[0]), int(point2[1])), 3, (0, 255, 0), -1)
             
+            cv2.imshow("Ground Floor", image)
+            cv2.imshow("Map", image2)
+            
+            #self.__showPointsOnFrameOfView(image, points)            
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
@@ -133,52 +144,14 @@ class Assignment2(object):
         # Close all allocated resources.
         cv2.destroyAllWindows()
         SIGBTools.release()
-
-    def __showPointsOnFrameOfView(self, image, points):
-        """A simple attempt to get mouse inputs and display images using pylab."""
-
-        # Make figure and two subplots.
-        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
-        fig = figure(1)
-        ax1 = subplot(1, 2, 1)
-        ax2 = subplot(1, 2, 2)
-        ax1.imshow(image)
-        ax2.imshow(image2)
-        ax1.axis("image")
-        ax1.axis("off")
-
-        # Read 5 points from the input images.
-        #fig.hold("on")
-
-        # Draw the selected points in both input images.
-        # Draw on matplotlib.
-        subplot(1, 2, 1)
-        plot(points[0][0], points[0][1], "rx")
         
-        # Draw on opencv.
-        cv2.circle(image2, (int(points[1][0]), int(points[1][1])), 10, (0, 255, 0), -1)
-
-        # Clear axis.
-        ax2.cla()
-        # Show the second subplot.
-        ax2.imshow(image2)
-        # Update display: updates are usually deferred.
-        draw()
-        show()
-        # Save with matplotlib and opencv.
-        #fig.savefig(self.__path + "Outputs/imagePyLab.png")
-        #cv2.imwrite(self.__path + "Outputs/imageOpenCV.png", image2)
-
 
     def __TextureMapGroundFloor(self):
         """Places a texture on the ground floor for each input image."""
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
-        image2 = cv2.imread(self.__path + "Images/ITUMap.png")        
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
-                                             [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
-                                             [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])
+
         
         # Load tracking data.
         
@@ -202,13 +175,6 @@ class Assignment2(object):
             # Show the final processed image.
             cv2.imshow("Camera", image)
             
-            homogenenous_coordinate = np.append(boxes[2][1], [1])
-            point2 = (np.dot(homography, homogenenous_coordinate))
-            point2 = point2[:2] / point2[2]
-            points = (boxes[2][1], point2)
-            cv2.circle(image2, (int(points[1][0]), int(points[1][1])), 3, (0, 255, 0), -1)
-            cv2.imshow("Ground Floor", image2)
-            #self.__showPointsOnFrameOfView(image, points)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
