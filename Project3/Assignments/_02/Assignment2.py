@@ -125,9 +125,7 @@ class Assignment2(object):
                 box = boxes[j]
                 cv2.rectangle(image, box[0], box[1], boxColors[j])
 
-            homogenenous_coordinate = np.append(boxes[2][1], [1])
-            point2 = (np.dot(homography, homogenenous_coordinate))
-            point2 = point2[:2] / point2[2]
+            point2 = self.__calcHomogenousCoordinates(boxes[2][1], homography)
             # Show the final processed image.
             cv2.circle(image2, (int(point2[0]), int(point2[1])), 3, (0, 255, 0), -1)
             
@@ -145,13 +143,16 @@ class Assignment2(object):
         cv2.destroyAllWindows()
         SIGBTools.release()
         
-
+    def __calcHomogenousCoordinates(self, point, homography):
+        homogenenous_coordinate = np.append(point, [1])
+        point2 = (np.dot(homography, homogenenous_coordinate))
+        return point2[:2] / point2[2]        
+        
     def __TextureMapGroundFloor(self):
         """Places a texture on the ground floor for each input image."""
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-
         
         # Load tracking data.
         
@@ -343,8 +344,12 @@ class Assignment2(object):
     def __ShowImageAndPlot(self):
         """A simple attempt to get mouse inputs and display images using pylab."""
         # Read the input image.
-        image  = cv2.imread(self.__path + "Images/ITUMap.png")
-        image2 = image.copy()
+        image = cv2.imread(self.__path + "Images/frame_S.png")
+        image2  = cv2.imread(self.__path + "Images/ITUMap.png")
+
+        homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
+                                   [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
+                                   [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])
 
         # Make figure and two subplots.
         fig = figure(1)
@@ -364,8 +369,10 @@ class Assignment2(object):
             # Draw on matplotlib.
             subplot(1, 2, 1)
             plot(point[0], point[1], "rx")
+            
+            point2 = self.__calcHomogenousCoordinates(point, homography)
             # Draw on opencv.
-            cv2.circle(image2, (int(point[0]), int(point[1])), 10, (0, 255, 0), -1)
+            cv2.circle(image2, (int(point2[0]), int(point2[1])), 10, (0, 255, 0), -1)
 
         # Clear axis.
         ax2.cla()
