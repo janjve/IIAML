@@ -101,9 +101,9 @@ class Assignment2(object):
     def __ShowFloorTrackingData(self):
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
-        image2 = cv2.imread(self.__path + "Images/ITUMap.png")        
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        homography = np.load(self.__path + "Outputs/homography_best.npy")        
+        homography = np.load(self.__path + "Outputs/homography_best.npy")
 
         # Load tracking data.
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
@@ -125,10 +125,16 @@ class Assignment2(object):
 
             point2 = self.__calcHomogenousCoordinates(boxes[2][1], homography)
             # Show the final processed image.
-            cv2.circle(image2, (int(point2[0]), int(point2[1])), 3, (0, 255, 0), -1)
+            # Live tracking
+            image2_updated = image2.copy()
+            cv2.circle(image2_updated, (int(point2[0]), int(point2[1])), 10, (0, 255, 0), -1)
+            cv2.imshow("Map", image2_updated)
+            # Drawing
+            #cv2.circle(image2, (int(point2[0]), int(point2[1])), 3, (0, 255, 0), -1)
+            #cv2.imshow("Map", image2)
             
             cv2.imshow("Ground Floor", image)
-            cv2.imshow("Map", image2)
+            
             
             #self.__showPointsOnFrameOfView(image, points)            
             if cv2.waitKey(1) & 0xFF == ord("q"):
