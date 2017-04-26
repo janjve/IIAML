@@ -155,7 +155,7 @@ class Assignment2(object):
         plot(points[0][0], points[0][1], "rx")
         
         # Draw on opencv.
-        cv2.circle(image2, (int(points[1][0]), int(points[0][1])), 10, (0, 255, 0), -1)
+        cv2.circle(image2, (int(points[1][0]), int(points[1][1])), 10, (0, 255, 0), -1)
 
         # Clear axis.
         ax2.cla()
@@ -174,9 +174,9 @@ class Assignment2(object):
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        homography = np.linalg.inv(np.array([[-8.36440943e-01, -1.34699341e+00, 6.11949860e+02],
-                                             [3.82874723e-01, 7.71772064e-01, -5.28472427e+01],
-                                             [-3.80532693e-03, 3.70028404e-03, 1.00000000e+00]]))
+        homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
+                                             [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
+                                             [3.25873637e-03, 5.71413156e-03, 1.00000000e+00]])
         
         # Load tracking data.
         
