@@ -123,6 +123,7 @@ class Assignment2(object):
 
             # Show the final processed image.
             cv2.imshow("Ground Floor", image)
+            
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
@@ -147,7 +148,7 @@ class Assignment2(object):
         ax1.axis("off")
 
         # Read 5 points from the input images.
-        fig.hold("on")
+        #fig.hold("on")
 
         # Draw the selected points in both input images.
         # Draw on matplotlib.
@@ -173,6 +174,7 @@ class Assignment2(object):
         """Places a texture on the ground floor for each input image."""
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")        
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
         homography = np.array([[1.38313735e+00, 3.70453015e+00, -5.94765885e+01],
                                              [-8.35013640e-01, 1.13045450e+00, 2.85528598e+02],
@@ -198,12 +200,15 @@ class Assignment2(object):
                 cv2.rectangle(image, box[0], box[1], boxColors[j])
 
             # Show the final processed image.
-            #cv2.imshow("Ground Floor", image)
+            cv2.imshow("Camera", image)
+            
             homogenenous_coordinate = np.append(boxes[2][1], [1])
             point2 = (np.dot(homography, homogenenous_coordinate))
             point2 = point2[:2] / point2[2]
             points = (boxes[2][1], point2)
-            self.__showPointsOnFrameOfView(image, points)
+            cv2.circle(image2, (int(points[1][0]), int(points[1][1])), 3, (0, 255, 0), -1)
+            cv2.imshow("Ground Floor", image2)
+            #self.__showPointsOnFrameOfView(image, points)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
