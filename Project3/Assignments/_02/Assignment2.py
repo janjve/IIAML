@@ -133,13 +133,53 @@ class Assignment2(object):
         cv2.destroyAllWindows()
         SIGBTools.release()
 
+    def __showPointsOnFrameOfView(self, image, points):
+        """A simple attempt to get mouse inputs and display images using pylab."""
+
+        # Make figure and two subplots.
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
+        fig = figure(1)
+        ax1 = subplot(1, 2, 1)
+        ax2 = subplot(1, 2, 2)
+        ax1.imshow(image)
+        ax2.imshow(image2)
+        ax1.axis("image")
+        ax1.axis("off")
+
+        # Read 5 points from the input images.
+        fig.hold("on")
+
+        # Draw the selected points in both input images.
+        # Draw on matplotlib.
+        subplot(1, 2, 1)
+        plot(points[0][0], points[0][1], "rx")
+        
+        # Draw on opencv.
+        cv2.circle(image2, (int(points[1][0]), int(points[0][1])), 10, (0, 255, 0), -1)
+
+        # Clear axis.
+        ax2.cla()
+        # Show the second subplot.
+        ax2.imshow(image2)
+        # Update display: updates are usually deferred.
+        draw()
+        show()
+        # Save with matplotlib and opencv.
+        #fig.savefig(self.__path + "Outputs/imagePyLab.png")
+        #cv2.imwrite(self.__path + "Outputs/imageOpenCV.png", image2)
+
+
     def __TextureMapGroundFloor(self):
         """Places a texture on the ground floor for each input image."""
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-
+        homography = np.linalg.inv(np.array([[-8.36440943e-01, -1.34699341e+00, 6.11949860e+02],
+                                             [3.82874723e-01, 7.71772064e-01, -5.28472427e+01],
+                                             [-3.80532693e-03, 3.70028404e-03, 1.00000000e+00]]))
+        
         # Load tracking data.
+        
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
         lenght   = dataFile.shape[0]
 
@@ -158,7 +198,12 @@ class Assignment2(object):
                 cv2.rectangle(image, box[0], box[1], boxColors[j])
 
             # Show the final processed image.
-            cv2.imshow("Ground Floor", image)
+            #cv2.imshow("Ground Floor", image)
+            homogenenous_coordinate = np.append(boxes[2][1], [1])
+            point2 = (np.dot(homography, homogenenous_coordinate))
+            point2 = point2[:2] / point2[2]
+            points = (boxes[2][1], point2)
+            self.__showPointsOnFrameOfView(image, points)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
@@ -365,8 +410,8 @@ class Assignment2(object):
     def __SimpleTextureMap(self):
         """Example of how linear texture mapping can be done using OpenCV."""
         # Read the input images.
-        image1 = cv2.imread(self.__path + "Images/ITULogo.png")
-        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
+        image1 = cv2.imread(self.__path + "Images/ITUMap.png")
+        image2 = cv2.imread(self.__path + "Images/frame_S.PNG")
 
         # Estimate the homography.
         H, points = SIGBTools.GetHomographyFromMouse(image1, image2, 4)
@@ -375,7 +420,7 @@ class Assignment2(object):
         h, w    = image2.shape[0:2]
         overlay = cv2.warpPerspective(image1, H, (w, h))
         result  = cv2.addWeighted(image2, 0.5, overlay, 0.5, 0)
-
+        print H
         # Show the result image.
         cv2.imshow("SimpleTextureMap", result)
         cv2.waitKey(0)
