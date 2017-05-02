@@ -133,7 +133,7 @@ class EyeFeatureDetector(object):
                             bestProps = props                                        
                             bestPupil = len(ellipses) - 1                           
                                                
-        
+                
 
         # Return the final result.
         return ellipses, centers, bestPupil
@@ -214,13 +214,9 @@ class EyeFeatureDetector(object):
             p1 = center
             p2 = (pupilCenter[0] + dx * maxDistance, pupilCenter[1] + dy * maxDistance)
             maxPoint = self.__FindMaxGradientValueOnNormal(magnitude, orientation, p1, p2)
-            
-            
-            #if not (maxPoint[0] == 0 and maxPoint[1] == 0):
-            #    ellipsePoints.append(np.array((int(maxPoint[0]),int(maxPoint[1]))))
                 
-            points.append((int(maxPoint[0]), int(maxPoint[1])))
-            lines.append(((int(p1[0]),int(p1[1])),(int(p2[0]), int(p2[1]))))
+            points.append(self.__intTuple(maxPoint))
+            lines.append((self.__intTuple(p1),self.__intTuple(p2)))
 
         if len(ellipsePoints) > 4:
             ellipse = cv2.fitEllipse(np.array(points))
@@ -232,7 +228,9 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
 
         return ellipse, lines, points
+    
 
+        
     #----------------------------------------------------------------------#
     #                         Public Class Methods                         #
     #----------------------------------------------------------------------#
@@ -485,4 +483,10 @@ class EyeFeatureDetector(object):
     def __GetAutoThresholdGlints(self,grayscale):
         threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,11,-20) 
         return threshold        
+    
+    def __intTuple(self, tup):
+        return (int(tup[0]),int(tup[1]))    
+    
+    def __testStuff():
+        return 1
             
