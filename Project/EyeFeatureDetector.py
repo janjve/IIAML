@@ -93,9 +93,9 @@ class EyeFeatureDetector(object):
         grayscale = cv2.morphologyEx(grayscale, cv2.MORPH_CLOSE, kernel)  
         
         # Create a binary image.
-        #_, thres = cv2.threshold(grayscale, threshold, 255,
-        #                         cv2.THRESH_BINARY_INV)
-        thres = self.__GetAutoThresholdPupil(grayscale)
+        _, thres = cv2.threshold(grayscale, threshold, 255,
+                                 cv2.THRESH_BINARY_INV)
+        #thres = self.__GetAutoThresholdPupil(grayscale)
         
         #print thres
         # Find blobs in the input image.
@@ -208,16 +208,25 @@ class EyeFeatureDetector(object):
         #<!--------------------------------------------------------------------------->
         #<!--                            YOUR CODE HERE                             -->
         #<!--------------------------------------------------------------------------->
+        ellipsePoints = []
         for (center, dx, dy) in circle:
-            maxDistance = 150
+            maxDistance = 120
             p1 = center
             p2 = (pupilCenter[0] + dx * maxDistance, pupilCenter[1] + dy * maxDistance)
             maxPoint = self.__FindMaxGradientValueOnNormal(magnitude, orientation, p1, p2)
             
-            if not (maxPoint[0] == 0 and maxPoint[1] == 0):
-                points.append(maxPoint)
+            
+            #if not (maxPoint[0] == 0 and maxPoint[1] == 0):
+            #    ellipsePoints.append(np.array((int(maxPoint[0]),int(maxPoint[1]))))
+                
+            points.append((int(maxPoint[0]), int(maxPoint[1])))
+            lines.append(((int(p1[0]),int(p1[1])),(int(p2[0]), int(p2[1]))))
 
-        ellipse = cv2.fitEllipse(np.array(points))
+        if len(ellipsePoints) > 4:
+            ellipse = cv2.fitEllipse(np.array(points))
+        else:
+            ellipse = cv2.minAreaRect(np.array(points))           
+        
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->
@@ -369,9 +378,13 @@ class EyeFeatureDetector(object):
         for i in xrange(len(normalVals)):
             if maxVal < normalVals[i]:
                 ori2 = normalOri[i]
-                if np.abs(ori1 - ori2) < 5:
+                if np.abs(ori2 - ori1) > 85 or np.abs(ori2 - ori1) < 5:
                     maxVal = normalVals[i]
                     maxPoint = points[i]
+        
+        if(maxPoint[0] == 0 or maxPoint[1] == 0):
+            return p2
+        
         #<!--------------------------------------------------------------------------->
         #<!--                                                                       -->
         #<!--------------------------------------------------------------------------->

@@ -56,7 +56,7 @@ proj.launch-config = {loc('ex1.py'): ('project',
                       loc('ex6.py'): ('project',
                                       (u'--cascade "Inputs/xml/haarcascade_frontalface_default.xml" --output "Ex06_E01.mp4" --input tais.jpg',
                                        ''))}
-proj.main-file = loc('ex1.py')
+proj.main-file = loc('ex4.py')
 [user attributes]
 debug.err-values = {loc('ex1.py'): {},
                     loc('ex2.py'): {}}
@@ -462,7 +462,7 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
          1492022281.996]],
         20),
         'current-loc': loc('EyeFeatureDetector.py'),
-        'editor-state-list': [(loc('../../../../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
+        'editor-state-list': [(loc('../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
                                {'attrib-starts': [('morphologyEx',
         2487)],
                                 'first-line': 2474L,
@@ -543,7 +543,7 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
                                 'selection_start': 9083L})],
         'has-focus': True,
         'locked': False},
-        [loc('../../../../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
+        [loc('../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
          loc('ex1.py'),
          loc('ex2.py'),
          loc('ex3.py'),
@@ -580,11 +580,11 @@ guimgr.recent-documents = [loc('EyeFeatureDetector.py'),
                            loc('RegionProps.py'),
                            loc('ex5.py'),
                            loc('ex4.py'),
-                           loc('../../../../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
+                           loc('../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'),
                            loc('ex2.py'),
                            loc('ex1.py'),
                            loc('ex3.py')]
-guimgr.visual-state = {loc('../../../../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'): {'a'\
+guimgr.visual-state = {loc('../../../AppData/Local/Wing Personal 6/pi-cache/2.7/C/Python27/lib/site-packages/cv2.pi'): {'a'\
         'ttrib-starts': [('adaptiveThreshold',
                           1605)],
         'first-line': 1592L,
