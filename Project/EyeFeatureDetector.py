@@ -474,8 +474,8 @@ class EyeFeatureDetector(object):
 
     def __GetAutoThresholdPupil(self, grayscale):                   
         threshold = cv2.adaptiveThreshold(grayscale,255,cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY,111,30)    
-        threshold = cv2.morphologyEx(threshold,cv2.MORPH_DILATE,np.ones((11, 11)))              
-        threshold = cv2.morphologyEx(threshold,cv2.MORPH_ERODE,np.ones((9, 9)))      
+        #threshold = cv2.morphologyEx(threshold,cv2.MORPH_DILATE,np.ones((11, 11)))              
+        #threshold = cv2.morphologyEx(threshold,cv2.MORPH_ERODE,np.ones((9, 9)))      
         return threshold
     
     def __GetAutoThresholdGlints(self,grayscale):
