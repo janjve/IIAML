@@ -160,7 +160,22 @@ class Assignment2(object):
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
 
         # Change to homography1.npy for new experiments.
-        homography = np.load(self.__path + "Outputs/homography_best.npy")
+        # ======================================================
+        # Read homography from ground to map.
+        H_g2m = np.load(self.__path + "Outputs/homography_best.npy")
+        
+        # Read the input images.
+        image1 = cv2.imread(self.__path + "Images/ITULogo.PNG")
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
+        
+        # Estimate the homography from image to map.
+        H_i2m, points = SIGBTools.GetHomographyFromMouse(image1, image2, -4)
+        
+        # Calculate homography from image to ground.
+        H_i2g = np.dot(np.linalg.inv(H_g2m), H_i2m)
+        
+        np.save(self.__path + "Outputs/homography2.npy", H_i2g)
+        # ========================================================
         
         # Load tracking data.
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
@@ -179,9 +194,17 @@ class Assignment2(object):
             for j in range(3):
                 box = boxes[j]
                 cv2.rectangle(image, box[0], box[1], boxColors[j])
+            
+            
+            # ========================================================
+            # Draw the homography transformation.
+            h, w    = image.shape[0:2]
+            overlay = cv2.warpPerspective(image1, H_i2g, (w, h))
+            result  = cv2.addWeighted(image, 0.5, overlay, 0.5, 0)
+            # ========================================================
 
             # Show the final processed image.
-            cv2.imshow("Camera", image)
+            cv2.imshow("Camera", result)
             
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
@@ -205,8 +228,8 @@ class Assignment2(object):
 
         # Define the number and ids of inner corners per a chessboard row and column.
         patternSize = (9, 6)
-        idx = [0, 8, 45, 53]
-
+        idx = [53, 45, 8, 0]
+        
         # Read each frame from input video.
         while True:
             # Read the current image from a video file.
@@ -217,8 +240,29 @@ class Assignment2(object):
             # Finds the positions of internal corners of the chessboard.
             corners = SIGBTools.FindCorners(image)
             if corners is not None:
-                pass
-
+                # ====================================================
+                # Find corner points image
+                corner_points = []
+                for i, point in enumerate(corners[idx]):
+                    corner_points.append(point[0].astype(int).tolist())
+                corner_points = np.array(corner_points)
+                
+                # Corner points texture
+                corner_points_texture = np.array([[0,0], 
+                                                  [texture.shape[1]-1,0],
+                                                  [0,texture.shape[0]-1],
+                                                  [texture.shape[1]-1,texture.shape[0]-1]],
+                                                 dtype=int)
+                
+                # Calculate homography
+                H = cv2.findHomography(corner_points_texture, corner_points)[0]
+                
+                # Draw the homography transformation.
+                h, w = image.shape[0:2]
+                overlay = cv2.warpPerspective(texture, H, (w, h))
+                image  = cv2.addWeighted(image, 1, overlay, 1, 0)
+                # ====================================================
+            
             # Show the final processed image.
             cv2.imshow("Image", image)
             if cv2.waitKey(1) & 0xFF == ord("q"):
@@ -395,11 +439,12 @@ class Assignment2(object):
     def __SimpleTextureMap(self):
         """Example of how linear texture mapping can be done using OpenCV."""
         # Read the input images.
-        image1 = cv2.imread(self.__path + "Images/ITUMap.png")
-        image2 = cv2.imread(self.__path + "Images/frame_S.PNG")
+        image1 = cv2.imread(self.__path + "Images/ITULogo.PNG")
+        image2 = cv2.imread(self.__path + "Images/ITUMap.png")
+        
 
         # Estimate the homography.
-        H, points = SIGBTools.GetHomographyFromMouse(image1, image2, 4)    
+        H, points = SIGBTools.GetHomographyFromMouse(image1, image2, 4)
         np.save(self.__path + "Outputs/homography1.npy", H)
         
         # Draw the homography transformation.
