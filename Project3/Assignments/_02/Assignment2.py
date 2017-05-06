@@ -103,7 +103,7 @@ class Assignment2(object):
         filename = self.__path + "Videos/ITUStudent.avi"
         image2 = cv2.imread(self.__path + "Images/ITUMap.png")
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        SIGBTools.RecordingVideos("C:\\ITU programming\\IIAML\\Project3\\Assignments\\_02\\Outputs\\MapLocation.wmv")
+        SIGBTools.RecordingVideos("C:\\Code\\IIAML\\Project3\\Assignments\\_02\\Outputs\\MapLocation.wmv")
         
         # Load homography
         homography = np.load(self.__path + "Outputs/homography1.npy")
@@ -164,7 +164,7 @@ class Assignment2(object):
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
         
         # Needs full path
-        SIGBTools.RecordingVideos("C:\\ITU programming\\IIAML\\Project3\\Assignments\\_02\\Outputs\\TextureMapGroundFloor.wmv")
+        SIGBTools.RecordingVideos("C:\\Code\IIAML\\Project3\\Assignments\\_02\\Outputs\\TextureMapGroundFloor.wmv")
         
         # ======================================================
         # Read homography from ground to map.
