@@ -103,8 +103,11 @@ class Assignment2(object):
         filename = self.__path + "Videos/ITUStudent.avi"
         image2 = cv2.imread(self.__path + "Images/ITUMap.png")
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-        homography = np.load(self.__path + "Outputs/homography_best.npy")
-
+        SIGBTools.RecordingVideos("C:\\ITU programming\\IIAML\\Project3\\Assignments\\_02\\Outputs\\MapLocation.wmv")
+        
+        # Load homography
+        homography = np.load(self.__path + "Outputs/homography1.npy")
+        
         # Load tracking data.
         dataFile = np.loadtxt(self.__path + "Inputs/trackingdata.dat")
         lenght   = dataFile.shape[0]
@@ -134,13 +137,14 @@ class Assignment2(object):
             #cv2.imshow("Map", image2)
             
             cv2.imshow("Ground Floor", image)
-            
+            SIGBTools.write(image2_updated)
             
             #self.__showPointsOnFrameOfView(image, points)            
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
         # Wait 2 seconds before finishing the method.
+        SIGBTools.close()
         cv2.waitKey(2000)
         cv2.imwrite(self.__path + "Outputs/mapImage.png", image2)
 
@@ -158,11 +162,13 @@ class Assignment2(object):
         # Load videodata.
         filename = self.__path + "Videos/ITUStudent.avi"
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
-
-        # Change to homography1.npy for new experiments.
+        
+        # Needs full path
+        SIGBTools.RecordingVideos("C:\\ITU programming\\IIAML\\Project3\\Assignments\\_02\\Outputs\\TextureMapGroundFloor.wmv")
+        
         # ======================================================
         # Read homography from ground to map.
-        H_g2m = np.load(self.__path + "Outputs/homography_best.npy")
+        H_g2m = np.load(self.__path + "Outputs/homography1.npy")
         
         # Read the input images.
         image1 = cv2.imread(self.__path + "Images/ITULogo.PNG")
@@ -183,7 +189,8 @@ class Assignment2(object):
 
         # Define the boxes colors.
         boxColors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)] # BGR.
-
+        images = []
+        
         # Read each frame from input video and draw the rectangules on it.
         for i in range(lenght):
             # Read the current image from a video file.
@@ -201,6 +208,8 @@ class Assignment2(object):
             h, w    = image.shape[0:2]
             overlay = cv2.warpPerspective(image1, H_i2g, (w, h))
             result  = cv2.addWeighted(image, 0.5, overlay, 0.5, 0)
+            #images.append(result)
+            SIGBTools.write(result)
             # ========================================================
 
             # Show the final processed image.
@@ -208,12 +217,14 @@ class Assignment2(object):
             
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
-
+        
+        
         # Wait 2 seconds before finishing the method.
         cv2.waitKey(2000)
-
+        SIGBTools.close()
         # Close all allocated resources.
         cv2.destroyAllWindows()
+        
         SIGBTools.release()
 
     def __TextureMapGridSequence(self):
@@ -222,6 +233,8 @@ class Assignment2(object):
         filename = self.__path + "Videos/Grid01.mp4"
         SIGBTools.VideoCapture(filename, SIGBTools.CAMERA_VIDEOCAPTURE_640X480)
 
+        SIGBTools.RecordingVideos("C:\\ITU programming\\IIAML\\Project3\\Assignments\\_02\\Outputs\\TextureMapGridSequenceGrid01.wmv")
+
         # Load texture mapping image.
         texture = cv2.imread(self.__path + "Images/ITULogo.png")
         texture = cv2.pyrDown(texture)
@@ -229,7 +242,7 @@ class Assignment2(object):
         # Define the number and ids of inner corners per a chessboard row and column.
         patternSize = (9, 6)
         idx = [53, 45, 8, 0]
-        
+
         # Read each frame from input video.
         while True:
             # Read the current image from a video file.
@@ -264,13 +277,14 @@ class Assignment2(object):
                 # ====================================================
             
             # Show the final processed image.
+            SIGBTools.write(image)
             cv2.imshow("Image", image)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
 
         # Wait 2 seconds before finishing the method.
+        SIGBTools.close()
         cv2.waitKey(2000)
-
         # Close all allocated resources.
         cv2.destroyAllWindows()
         SIGBTools.release()

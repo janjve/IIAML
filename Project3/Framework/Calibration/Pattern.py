@@ -79,28 +79,32 @@ class Pattern(object):
 
     def FindChessboardCorners(self, image):
         """Finds the positions of internal corners of the chessboard."""
-        # Processed image
-        gray = image.copy()
-
-        # Finds the positions of internal corners of the chessboard.
-        retval, corners = cv2.findChessboardCorners(gray, self.Size)
-
-        if retval:
-            # Check if the input image is a grayscale image.
-            if len(gray.shape) == 3:
-                gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
-
-            # Refines the corner locations.
-            criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.01)
-            corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-        else:
-            corners = None
-
-        # Garbage Collector.
-        del gray
-
-        # Return the final result.
-        return corners
+	# Processed image
+	gray = image.copy()
+	
+	# Finds the positions of internal corners of the chessboard.
+	flags = cv2.CALIB_CB_ADAPTIVE_THRESH | cv2.CALIB_CB_NORMALIZE_IMAGE | cv2.CALIB_CB_FAST_CHECK
+	retval, corners = cv2.findChessboardCorners(gray, (9, 6), flags=flags)
+	
+	if retval:
+		# Check if the input image is a grayscale image.
+		if len(gray.shape) == 3:
+			gray = cv2.cvtColor(gray, cv2.COLOR_BGR2GRAY)
+	
+		# Refines the corner locations.
+		criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.01)
+		corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
+	
+		# Draw the detected chessboard.
+		cv2.drawChessboardCorners(image, (9, 6), corners, True)
+	else:
+		corners = None
+	
+	# Garbage Collector.
+	del gray
+	
+	# Return the final result.
+	return corners
 
     def FindCirclesGrid(self, image):
         """Finds centers in the grid of circles using an asymmetric pattern."""
