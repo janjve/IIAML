@@ -85,8 +85,8 @@ def fundamentalMatrix():
     points2 = points[1::2]
     F, mask = cv2.findFundamentalMat(points1, points2)
     
-    img1_epilined = drawlines(img1, points1, F, (0,0,255))
-    img2_epilined = drawlines(img2, points2, F.T, (255,0,0))
+    img1_epilined = drawlines(img1, points1, F, (255,0,0))
+    img2_epilined = drawlines(img2, points2, F.T, (0,0,255))
     
     plt.subplot(121),plt.imshow(img1_epilined)
     plt.subplot(122),plt.imshow(img2_epilined)
