@@ -45,10 +45,10 @@ plt.show()
 # check to see if the PCA components should be visualized
 if args["visualize"] > 0:
 	# initialize the montage for the components
-	montage = ResultsMontage((62, 47), 4, 16)
+	montage = ResultsMontage((62, 47), 10, 100)
 
 	# loop over the first 16 individual components
-	for (i, component) in enumerate(pca.components_[:16]):
+	for (i, component) in enumerate(pca.components_[:100]):
 		# reshape the component to a 2D matrix, then convert the data type to an unsigned
 		# 8-bit integer so it can be displayed with OpenCV
 		component = component.reshape((62, 47))

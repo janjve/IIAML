@@ -78,6 +78,12 @@ def fundamentalMatrix():
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
+    points1, points2 = points[::2], points[1::2] 
+    
+    F, mask = cv2.findFundamentalMat(points1, points2, method=None, param1=None, 
+                          param2=None, mask=None)
+    
+    
 
 
 
