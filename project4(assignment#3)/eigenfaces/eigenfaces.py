@@ -80,10 +80,23 @@ for i in np.random.randint(0, high=len(testing.data), size=(args["sample_size"],
 	#<!--------------------------------------------------------------------------->
 	#<!--                            YOUR CODE HERE                             -->
 	#<!--------------------------------------------------------------------------->
-    
-    
-    
-    
+	transformed_sample = pca.transform(testing.data[i])
+	prediction = model.predict(transformed_sample)
+	
+	component_images = []
+	for i, component in enumerate(pca.components_[:len(transformed_sample)]):
+		# reshape the component to a 2D matrix, then convert the data type to an unsigned
+		# 8-bit integer so it can be displayed with OpenCV
+		component = component.reshape((62, 47))
+		component = exposure.rescale_intensity(component, out_range=(0, 255)).astype("uint8")
+		component = np.dstack([component] * 3)
+		component_images.append(component)
+	
+	image = np.zeros(component_images[0].shape)
+	for weight, component_image in zip(transformed_sample.flatten(), component_images):
+		image += weight * component_image
+	cv2.imshow("Components", image)
+	
 	#<!--------------------------------------------------------------------------->
 	#<!--                                                                       -->
 	#<!--------------------------------------------------------------------------->
