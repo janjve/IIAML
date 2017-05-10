@@ -99,8 +99,8 @@ def crossProductMatrix(t):
 # Tips: You can add a new video capture device or video file with the method
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
-capture.addInputVideo(0, size=(640, 480), framerate=30.)
 capture.addInputVideo(1, size=(640, 480), framerate=30.)
+capture.addInputVideo(2, size=(640, 480), framerate=30.)
 
 # Creates a window to show the stereo images.
 cv2.namedWindow("Stereo", cv2.WINDOW_AUTOSIZE)
