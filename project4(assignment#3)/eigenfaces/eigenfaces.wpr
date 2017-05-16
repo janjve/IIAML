@@ -12,6 +12,6 @@ proj.directory-list = [{'dirloc': loc('.'),
                         'watch_for_changes': True}]
 proj.file-type = 'shared'
 proj.launch-config = {loc('eigenfaces.py'): ('project',
-        (u'-d "caltech_faces" -n 5',
+        (u'-d "caltech_faces" -n 100',
          ''))}
 proj.main-file = loc('eigenfaces.py')

@@ -32,7 +32,7 @@ from CaptureVideo.CaptureVideo import CaptureVideo
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
 capture.addInputVideo(0, size=(640, 480), framerate=30.)
-capture.addInputVideo(1, size=(640, 480), framerate=30.)
+capture.addInputVideo(2, size=(640, 480), framerate=30.)
 
 # This repetion will run while there is a new frame in the video file or
 # while the user do not press the "q" (quit) keyboard button.

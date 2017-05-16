@@ -80,22 +80,38 @@ for i in np.random.randint(0, high=len(testing.data), size=(args["sample_size"],
 	#<!--------------------------------------------------------------------------->
 	#<!--                            YOUR CODE HERE                             -->
 	#<!--------------------------------------------------------------------------->
-	transformed_sample = pca.transform(testing.data[i])
+	input_data = testing.data[i]
+	transformed_sample = pca.transform(input_data)
 	prediction = model.predict(transformed_sample)
+
+	# Normalize weights
+	#weights = transformed_sample.flatten()
+
+	#weights = (weights-min(weights))/(max(weights)-min(weights))
+	#image = component_images[0].copy()
+	#image[:] = 0
+	#weight_total = 0.
+	# Merge images with weights
 	
-	component_images = []
-	for i, component in enumerate(pca.components_[:len(transformed_sample)]):
-		# reshape the component to a 2D matrix, then convert the data type to an unsigned
-		# 8-bit integer so it can be displayed with OpenCV
-		component = component.reshape((62, 47))
-		component = exposure.rescale_intensity(component, out_range=(0, 255)).astype("uint8")
-		component = np.dstack([component] * 3)
-		component_images.append(component)
+	# Reconstruct
+	reconstructed = pca.inverse_transform(transformed_sample)
+	#for weight, component_image in zip(weights, component_images):
+#		image = cv2.addWeighted(image, weight_total, component_image, weight, 0)
+#		weight_total += weight
 	
-	image = np.zeros(component_images[0].shape)
-	for weight, component_image in zip(transformed_sample.flatten(), component_images):
-		image += weight * component_image
-	cv2.imshow("Components", image)
+	print(prediction)
+	
+	reconstructed = reconstructed.reshape((62, 47))
+	reconstructed = exposure.rescale_intensity(reconstructed, out_range=(0, 255)).astype("uint8")
+	reconstructed = np.dstack([reconstructed] * 3)	
+	#print(weights)
+	
+	input_data = input_data.reshape((62, 47))
+	input_data = exposure.rescale_intensity(input_data, out_range=(0, 255)).astype("uint8")
+	input_data = np.dstack([input_data] * 3)		
+	output_image = np.hstack((input_data, reconstructed))
+	cv2.imshow("actual", output_image)
+	
 	
 	#<!--------------------------------------------------------------------------->
 	#<!--                                                                       -->
