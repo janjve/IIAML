@@ -83,8 +83,8 @@ def calibrate(leftCorners, rightCorners, objectPoints):
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
-    use_library_functions = False
-    compare = True
+    use_library_functions = True
+    compare = False
     
     cameraMatrix_l = np.zeros((3,3))
     distCoeffs_l = np.zeros((5,1))    
@@ -96,15 +96,12 @@ def calibrate(leftCorners, rightCorners, objectPoints):
         retval1, cameraMatrix1, distCoeffs1, rvecs1, tvecs1 = cv2.calibrateCamera(objectPoints, leftCorners, imageSize, cameraMatrix_l, distCoeffs_l)
         retval2, cameraMatrix2, distCoeffs2, rvecs2, tvecs2 = cv2.calibrateCamera(objectPoints, rightCorners, imageSize, cameraMatrix_r, distCoeffs_r)
         
-        for (i, rvec, tvec) in zip(range(len(rvecs1)), rvecs1, tvecs1):
-            print "no: ", str(i)
-            calc_matrices(rvec, tvec, cameraMatrix1, cameraMatrix2)
-            
-        print "NEXT"
+        
+        print "VEC1"
         for (i, rvec, tvec) in zip(range(len(rvecs2)), rvecs2, tvecs2):
             print "no: ", str(i)
             calc_matrices(rvec, tvec, cameraMatrix1, cameraMatrix2)
-            
+        
         """
         skew_symmetric_matrix1 = crossProductMatrix(tvecs1[0]) # This is not correct...
         essential_matrix = skew_symmetric_matrix1 * np.matrix(cv2.Rodrigues(np.array(rvecs1[0]))[0]) # A_x * R
@@ -124,15 +121,16 @@ def calibrate(leftCorners, rightCorners, objectPoints):
         print "CV2"
         print E
         print F
-        cv2.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, 
-                         imageSize, R, T)
+        R1, R2, P1, P2, Q, roi1, roi2 = cv2.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, 
+                         imageSize, R, T, alpha=0)
         
-        map1_l, map2_l = cv2.initUndistortRectifyMap(cameraMatrix1, distCoeffs1, R, cameraMatrix2, 
-                                   imageSize, cv2.CV_16SC2)
-        map1_r, map2_r = cv2.initUndistortRectifyMap(cameraMatrix2, distCoeffs2, R, cameraMatrix1, 
-                                                 imageSize, cv2.CV_16SC2)
-        map1.extend([map1_l, map2_l])
-        map2.extend([map1_r, map2_r])
+        map1 = cv2.initUndistortRectifyMap(cameraMatrix1, distCoeffs1, R1, P1, 
+                                                     imageSize, cv2.CV_16SC2)
+        map2 = cv2.initUndistortRectifyMap(cameraMatrix2, distCoeffs2, R2, P2, 
+                                                     imageSize, cv2.CV_16SC2)
+
+        #map1 = map1
+        #map2 = map2
     
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -157,8 +155,8 @@ def crossProductMatrix(t):
 # Tips: You can add a new video capture device or video file with the method
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
-capture.addInputVideo(0, size=(640, 480), framerate=30.)
 capture.addInputVideo(2, size=(640, 480), framerate=30.)
+capture.addInputVideo(1, size=(640, 480), framerate=30.)
 
 # Creates a window to show the stereo images.
 cv2.namedWindow("Stereo", cv2.WINDOW_AUTOSIZE)
