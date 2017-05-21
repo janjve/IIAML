@@ -22,7 +22,7 @@ __version__ = "$Revision: 2017042501 $"
 ########################################################################
 import cv2
 import numpy as np
-
+from matplotlib import pyplot as plt
 from collections import deque
 
 from CaptureVideo.CaptureVideo import CaptureVideo
@@ -74,24 +74,47 @@ def fundamentalMatrix():
 
     # Get all points selected by the user.
     points = np.asarray(queue, dtype=np.float32)
-
+    
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
-
-
-
+    split = stereo.shape[1] / 2
+    img1 = stereo[:,split:]
+    img2 = stereo[:,:split]
+    points1 = points[::2]
+    points2 = points[1::2]
+    F, mask = cv2.findFundamentalMat(points1, points2)
+    
+    img1_epilined = drawlines(img1, points1, F, (255,0,0))
+    img2_epilined = drawlines(img2, points2, F.T, (0,0,255))
+    
+    plt.subplot(121),plt.imshow(img1_epilined)
+    plt.subplot(122),plt.imshow(img2_epilined)
+    plt.show()
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
 
+def drawlines(img1, points, f1, color):
+    ''' img1 - image on which we draw the epilines
+        lines - corresponding epilines '''
+    r,c = img1.shape[:2]
+    img1 = cv2.cvtColor(img1,cv2.COLOR_RGB2BGR)
+    
+    for point in points:
+        line = np.dot(f1, point)
+        x0, y0 = map(int, [0, -line[2]/line[1] ])
+        x1, y1 = map(int, [c, (line[2]+line[0]*c)/(-line[1]) ])
+        img1 = cv2.line(img1, (x0,y0), (x1,y1), color,1)
+        
+    return img1
 
 ########################################################################
 # Create a capture video object.
 # Tips: You can add a new video capture device or video file with the method
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
-capture.addInputVideo(0, size=(640, 480), framerate=30.)
+capture.addInputVideo(2, size=(640, 480), framerate=30.)
 capture.addInputVideo(1, size=(640, 480), framerate=30.)
 
 # Creates a window to show the stereo images.

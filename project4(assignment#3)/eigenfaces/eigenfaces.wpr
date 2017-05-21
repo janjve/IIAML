@@ -11,4 +11,7 @@ proj.directory-list = [{'dirloc': loc('.'),
                         'recursive': True,
                         'watch_for_changes': True}]
 proj.file-type = 'shared'
-proj.main-file = loc('fundamentalMatrix.py')
+proj.launch-config = {loc('eigenfaces.py'): ('project',
+        (u'-d "caltech_faces" -n 100',
+         ''))}
+proj.main-file = loc('eigenfaces.py')

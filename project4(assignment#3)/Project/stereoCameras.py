@@ -67,6 +67,14 @@ def calculatePattern():
     # Return the final result.
     return objectPoints
 
+def calc_matrices(tvecs1, rvecs1, cameraMatrix1, cameraMatrix2):
+    skew_symmetric_matrix1 = crossProductMatrix(tvecs1) # This is not correct...
+    essential_matrix = skew_symmetric_matrix1 * np.matrix(cv2.Rodrigues(np.array(rvecs1))[0]) # A_x * R
+
+    fundamental_matrix = np.matrix(cameraMatrix2).T.I * essential_matrix * np.matrix(cameraMatrix1).I # K2^-T * E * K1^-1    
+    print essential_matrix
+    print fundamental_matrix    
+
 def calibrate(leftCorners, rightCorners, objectPoints):
     # Global variables.
     global map1
@@ -75,9 +83,55 @@ def calibrate(leftCorners, rightCorners, objectPoints):
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
+    use_library_functions = True
+    compare = False
+    
+    cameraMatrix_l = np.zeros((3,3))
+    distCoeffs_l = np.zeros((5,1))    
+    cameraMatrix_r = np.zeros((3,3))
+    distCoeffs_r = np.zeros((5,1))
+    
+    if not use_library_functions or compare:
+        # Using approach from exercise sheet (b), (d), (e)
+        retval1, cameraMatrix1, distCoeffs1, rvecs1, tvecs1 = cv2.calibrateCamera(objectPoints, leftCorners, imageSize, cameraMatrix_l, distCoeffs_l)
+        retval2, cameraMatrix2, distCoeffs2, rvecs2, tvecs2 = cv2.calibrateCamera(objectPoints, rightCorners, imageSize, cameraMatrix_r, distCoeffs_r)
+        
+        
+        print "VEC1"
+        for (i, rvec, tvec) in zip(range(len(rvecs2)), rvecs2, tvecs2):
+            print "no: ", str(i)
+            calc_matrices(rvec, tvec, cameraMatrix1, cameraMatrix2)
+        
+        """
+        skew_symmetric_matrix1 = crossProductMatrix(tvecs1[0]) # This is not correct...
+        essential_matrix = skew_symmetric_matrix1 * np.matrix(cv2.Rodrigues(np.array(rvecs1[0]))[0]) # A_x * R
+        
+        fundamental_matrix = np.matrix(cameraMatrix2).T.I * essential_matrix * np.matrix(cameraMatrix1).I # K2^-T * E * K1^-1
+        print "Manuel"
+        print essential_matrix
+        print fundamental_matrix
+        """
+        
+    if use_library_functions or compare:
+        # Using OpenCV (f), (g), (h)
+        retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners, 
+                           cameraMatrix_l, distCoeffs_l, 
+                           cameraMatrix_r, distCoeffs_r, 
+                           imageSize)
+        print "CV2"
+        print E
+        print F
+        R1, R2, P1, P2, Q, roi1, roi2 = cv2.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, 
+                         imageSize, R, T, alpha=0)
+        
+        map1 = cv2.initUndistortRectifyMap(cameraMatrix1, distCoeffs1, R1, P1, 
+                                                     imageSize, cv2.CV_16SC2)
+        map2 = cv2.initUndistortRectifyMap(cameraMatrix2, distCoeffs2, R2, P2, 
+                                                     imageSize, cv2.CV_16SC2)
 
-
-
+        #map1 = map1
+        #map2 = map2
+    
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
@@ -87,8 +141,10 @@ def crossProductMatrix(t):
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
-
-
+    # Calculate cross product matrix (c)
+    return np.matrix([[0, -t[2], t[1]], 
+                     [t[2], 0, -t[0]],
+                     [-t[1], t[0], 0]])
 
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
@@ -99,7 +155,7 @@ def crossProductMatrix(t):
 # Tips: You can add a new video capture device or video file with the method
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
-capture.addInputVideo(0, size=(640, 480), framerate=30.)
+capture.addInputVideo(2, size=(640, 480), framerate=30.)
 capture.addInputVideo(1, size=(640, 480), framerate=30.)
 
 # Creates a window to show the stereo images.
