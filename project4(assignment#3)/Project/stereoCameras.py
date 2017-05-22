@@ -22,6 +22,7 @@ __version__ = "$Revision: 2017042501 $"
 import cv2
 import numpy as np
 
+
 from collections import deque
 
 from CaptureVideo.CaptureVideo import CaptureVideo
@@ -83,13 +84,17 @@ def calibrate(leftCorners, rightCorners, objectPoints):
     #<!--------------------------------------------------------------------------->
     #<!--                            YOUR CODE HERE                             -->
     #<!--------------------------------------------------------------------------->
+    # prepare matrices
     use_library_functions = True
     compare = False
+    cameraMatrix_l = np.zeros((3, 3), np.float32)
+    distCoeffs_l = np.zeros((1, 5), np.float32)
+    cameraMatrix_r = np.zeros((3, 3), np.float32)
+    distCoeffs_r = np.zeros((1, 5), np.float32)
+
+    # mono flags
+    mono_flags = 0
     
-    cameraMatrix_l = np.zeros((3,3))
-    distCoeffs_l = np.zeros((5,1))    
-    cameraMatrix_r = np.zeros((3,3))
-    distCoeffs_r = np.zeros((5,1))
     
     if not use_library_functions or compare:
         # Using approach from exercise sheet (b), (d), (e)
@@ -113,6 +118,42 @@ def calibrate(leftCorners, rightCorners, objectPoints):
         """
         
     if use_library_functions or compare:
+        '''
+        cameraMatrix1 = np.zeros(shape=(3,3))
+        cameraMatrix2 = np.zeros(shape=(3,3))    
+        distCoeffs1 = np.zeros((1, 5), np.float32)    
+        distCoeffs2 = np.zeros((1, 5), np.float32)        
+        retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners,cameraMatrix1,distCoeffs1,cameraMatrix2, distCoeffs2,imageSize)
+        R1 = np.zeros(shape=(3,3))
+        R2 = np.zeros(shape=(3,3))
+        P1 = np.zeros(shape=(3,3))
+        P2 = np.zeros(shape=(3,3))
+        cv2.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2,imageSize, R, T, R1, R2, P1, P2, Q=None, alpha=-1, newImageSize=(0,0))
+        map1= cv2.initUndistortRectifyMap(cameraMatrix1, distCoeffs1, R1, P1, imageSize, cv2.CV_32FC1)
+        map2 = cv2.initUndistortRectifyMap(cameraMatrix2, distCoeffs2, R2, P2, imageSize, cv2.CV_32FC1)        
+               '''
+        # run monocular calibration on each camera to get intrinsic parameters
+        (rms_l, cameraMatrix_l, distCoeffs_l, _, _) = cv2.calibrateCamera(objectPoints, leftCorners, imageSize, cameraMatrix_l, distCoeffs_l,flags=mono_flags)
+        (rms_r, cameraMatrix_r, distCoeffs_r, _, _) =  cv2.calibrateCamera(objectPoints, rightCorners, imageSize,cameraMatrix_r, distCoeffs_r,flags=mono_flags)
+        # set stereo flags
+        stereo_flags = 0        
+        stereo_flags |= cv2.CALIB_FIX_INTRINSIC
+        _, cameraMatrix_l, distCoeffs_l,cameraMatrix_r, distCoeffs_r, R, T, _, _ = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners, cameraMatrix_l, distCoeffs_l, cameraMatrix_r,distCoeffs_r,imageSize)
+        
+
+        # initialize result cvmats        
+        R1 = np.zeros(shape=(3,3))
+        R2 = np.zeros(shape=(3,3))
+        P1 = np.zeros(shape=(3,4))
+        P2 = np.zeros(shape=(3,4))
+        # do rectification
+        cv2.stereoRectify(cameraMatrix_l,distCoeffs_l, cameraMatrix_r, distCoeffs_r, imageSize, R, T, R1, R2, P1, P2, alpha=-1)
+        map1 = cv2.initUndistortRectifyMap(cameraMatrix_l, distCoeffs_l, R1, P1, imageSize, cv2.CV_32FC1)
+        map2 = cv2.initUndistortRectifyMap(cameraMatrix_r, distCoeffs_r, R2, P2, imageSize, cv2.CV_32FC1)      
+                                        
+        
+        '''
+                
         # Using OpenCV (f), (g), (h)
         retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners, 
                            cameraMatrix_l, distCoeffs_l, 
@@ -131,7 +172,7 @@ def calibrate(leftCorners, rightCorners, objectPoints):
 
         #map1 = map1
         #map2 = map2
-    
+    '''
     #<!--------------------------------------------------------------------------->
     #<!--                                                                       -->
     #<!--------------------------------------------------------------------------->
