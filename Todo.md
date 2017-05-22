@@ -1,6 +1,9 @@
 ##Todo list
 
-- Recordings for assignment 2
-- Gather assignment 1, 2 and 3 in one file
+- Output for assignment 2 + write in outputs in appendix
 - Fix code for assignment 3, part 2
-- Write report for assignment 3 part 1, 2 and 3.
+- Write report for assignment 3 part 2.
+
+
+##Søren
+- Given time, look back into assignment 2, part 3. Some issues with high number of epochs, without crossvalidation, problably not wise, as we might overfit the model. 
