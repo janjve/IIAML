@@ -118,38 +118,48 @@ def calibrate(leftCorners, rightCorners, objectPoints):
         """
         
     if use_library_functions or compare:
-        '''
-        cameraMatrix1 = np.zeros(shape=(3,3))
-        cameraMatrix2 = np.zeros(shape=(3,3))    
-        distCoeffs1 = np.zeros((1, 5), np.float32)    
-        distCoeffs2 = np.zeros((1, 5), np.float32)        
-        retval, cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2, R, T, E, F = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners,cameraMatrix1,distCoeffs1,cameraMatrix2, distCoeffs2,imageSize)
-        R1 = np.zeros(shape=(3,3))
-        R2 = np.zeros(shape=(3,3))
-        P1 = np.zeros(shape=(3,3))
-        P2 = np.zeros(shape=(3,3))
-        cv2.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2,imageSize, R, T, R1, R2, P1, P2, Q=None, alpha=-1, newImageSize=(0,0))
-        map1= cv2.initUndistortRectifyMap(cameraMatrix1, distCoeffs1, R1, P1, imageSize, cv2.CV_32FC1)
-        map2 = cv2.initUndistortRectifyMap(cameraMatrix2, distCoeffs2, R2, P2, imageSize, cv2.CV_32FC1)        
-               '''
+
+        cameraMatrix_l = np.zeros((3, 3), np.float32)
+        distCoeffs_l = np.zeros((1, 5), np.float32)
+        cameraMatrix_r = np.zeros((3, 3), np.float32)
+        distCoeffs_r = np.zeros((1, 5), np.float32)        
         # run monocular calibration on each camera to get intrinsic parameters
-        (rms_l, cameraMatrix_l, distCoeffs_l, _, _) = cv2.calibrateCamera(objectPoints, leftCorners, imageSize, cameraMatrix_l, distCoeffs_l,flags=mono_flags)
-        (rms_r, cameraMatrix_r, distCoeffs_r, _, _) =  cv2.calibrateCamera(objectPoints, rightCorners, imageSize,cameraMatrix_r, distCoeffs_r,flags=mono_flags)
+        (_, cameraMatrix_l, distCoeffs_l, _, _) = cv2.calibrateCamera(objectPoints, leftCorners, imageSize, None, None) 
+        (_, cameraMatrix_r, distCoeffs_r, _, _) =  cv2.calibrateCamera(objectPoints, rightCorners, imageSize,None, None)
         # set stereo flags
         stereo_flags = 0        
         stereo_flags |= cv2.CALIB_FIX_INTRINSIC
-        _, cameraMatrix_l, distCoeffs_l,cameraMatrix_r, distCoeffs_r, R, T, _, _ = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners, cameraMatrix_l, distCoeffs_l, cameraMatrix_r,distCoeffs_r,imageSize)
+        criteria = (cv2.TERM_CRITERIA_COUNT + cv2.TERM_CRITERIA_EPS, 100, 1e-5)
+        flags  = (cv2.CALIB_FIX_ASPECT_RATIO + cv2.CALIB_ZERO_TANGENT_DIST + cv2.CALIB_USE_INTRINSIC_GUESS +
+                   cv2.CALIB_SAME_FOCAL_LENGTH + cv2.CALIB_RATIONAL_MODEL + cv2.CALIB_FIX_K3 + cv2.CALIB_FIX_K4 + cv2.CALIB_FIX_K5)        
+        _, cameraMatrix_l, distCoeffs_l,cameraMatrix_r, distCoeffs_r, R, T, E, F = cv2.stereoCalibrate(objectPoints, leftCorners, rightCorners, cameraMatrix_l, distCoeffs_l, cameraMatrix_r,distCoeffs_r,imageSize,flags=flags
+                                                                                                       ,criteria=criteria)    
+        #calculation Esential matrix and Fundamental matrix
+        sym = crossProductMatrix(T)
+        Em =  sym * R
+        Fm = np.matrix(cameraMatrix_r).T.I * Em * np.matrix(cameraMatrix_l).I
+        #Normalizing the value
+        print sym
         
-
-        # initialize result cvmats        
-        R1 = np.zeros(shape=(3,3))
-        R2 = np.zeros(shape=(3,3))
-        P1 = np.zeros(shape=(3,4))
-        P2 = np.zeros(shape=(3,4))
+        print Fm        
+        Fm /= Fm[2,2]
+        print Em
+        print E
+    
+        print Fm
+        print F            
+        '''
+        SSm=np.mat([[0,-T[2],T[1]],[T[2],0,-T[0]],[-T[1],T[0],0]])
+        Em=Sym*np.mat(R)
+        Fm=np.linalg.inv(cameraMatrix_r).T*np.mat(E)*np.linalg.inv(cameraMatrix_l) 
+        Fm /= Fm[2,2]
+            
+        '''
+            
         # do rectification
-        cv2.stereoRectify(cameraMatrix_l,distCoeffs_l, cameraMatrix_r, distCoeffs_r, imageSize, R, T, R1, R2, P1, P2, alpha=-1)
-        map1 = cv2.initUndistortRectifyMap(cameraMatrix_l, distCoeffs_l, R1, P1, imageSize, cv2.CV_32FC1)
-        map2 = cv2.initUndistortRectifyMap(cameraMatrix_r, distCoeffs_r, R2, P2, imageSize, cv2.CV_32FC1)      
+        R1,R2,P1,P2,_,_,_ = cv2.stereoRectify(cameraMatrix_l,distCoeffs_l, cameraMatrix_r, distCoeffs_r, imageSize, R, T, alpha=0)
+        map1 = cv2.initUndistortRectifyMap(cameraMatrix_l, distCoeffs_l, R1, P1, imageSize, cv2.CV_16SC2)
+        map2 = cv2.initUndistortRectifyMap(cameraMatrix_r, distCoeffs_r, R2, P2, imageSize, cv2.CV_16SC2)      
                                         
         
         '''
@@ -178,18 +188,10 @@ def calibrate(leftCorners, rightCorners, objectPoints):
     #<!--------------------------------------------------------------------------->
 
 def crossProductMatrix(t):
-    """Estimating the skew symmetric matrix."""
-    #<!--------------------------------------------------------------------------->
-    #<!--                            YOUR CODE HERE                             -->
-    #<!--------------------------------------------------------------------------->
-    # Calculate cross product matrix (c)
+    """Estimating the skew symmetric matrix."""  
     return np.matrix([[0, -t[2], t[1]], 
                      [t[2], 0, -t[0]],
                      [-t[1], t[0], 0]])
-
-    #<!--------------------------------------------------------------------------->
-    #<!--                                                                       -->
-    #<!--------------------------------------------------------------------------->
 
 ########################################################################
 # Create a capture video object.
@@ -197,7 +199,7 @@ def crossProductMatrix(t):
 # CaptureVideo.addInputVideo().
 capture = CaptureVideo(isDebugging=True)
 capture.addInputVideo(2, size=(640, 480), framerate=30.)
-capture.addInputVideo(1, size=(640, 480), framerate=30.)
+capture.addInputVideo(0, size=(640, 480), framerate=30.)
 
 # Creates a window to show the stereo images.
 cv2.namedWindow("Stereo", cv2.WINDOW_AUTOSIZE)
@@ -233,9 +235,10 @@ while True:
 
     # Undistorted image.
     if (len(map1) == 2):
-        left = cv2.remap(frames[0], map1[0], map1[1], cv2.INTER_LINEAR)
-        right = cv2.remap(frames[1], map2[0], map2[1], cv2.INTER_LINEAR)
-        undistorted = np.hstack((left, right))
+        interFlag =  cv2.INTER_LINEAR
+        left = cv2.remap(frames[0], map1[0], map1[1], interFlag)
+        right = cv2.remap(frames[1], map2[0], map2[1], interFlag)
+        undistorted = np.hstack((left, right)) 
         stereo = np.vstack((stereo, undistorted))
         stereo = cv2.resize(stereo, (0, 0), fx=0.5, fy=0.5)
 
